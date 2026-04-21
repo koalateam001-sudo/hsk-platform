@@ -1,5 +1,5 @@
 -- Initial schema untuk MVP publik fase 1.
--- Sumber kebenaran: specs/_data-models.md (versi 3.3).
+-- Sumber kebenaran: specs/_data-models.md (versi 3.6).
 -- Tabel subscriptions dan processed_webhook_events sengaja TIDAK dibuat di sini
 -- karena fase 2 / deferred.
 
@@ -20,7 +20,7 @@ CREATE TABLE profiles (
 CREATE OR REPLACE FUNCTION handle_new_user()
 RETURNS trigger AS $$
 BEGIN
-  INSERT INTO profiles (id, full_name, email)
+  INSERT INTO public.profiles (id, full_name, email)
   VALUES (
     new.id,
     NULLIF(TRIM(COALESCE(new.raw_user_meta_data->>'full_name', '')), ''),
@@ -28,7 +28,7 @@ BEGIN
   );
   RETURN new;
 END;
-$$ LANGUAGE plpgsql SECURITY DEFINER;
+$$ LANGUAGE plpgsql SECURITY DEFINER SET search_path = public;
 
 CREATE TRIGGER on_auth_user_created
   AFTER INSERT ON auth.users

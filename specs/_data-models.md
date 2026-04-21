@@ -1,7 +1,7 @@
 # Data Models - Single Source of Truth
 
 **Status:** Active  
-**Version:** 3.4  
+**Version:** 3.6  
 **Last Updated:** 2026-04-21  
 
 > Setiap perubahan schema database harus diupdate di sini terlebih dahulu.
@@ -11,7 +11,8 @@
 ## Current State
 
 - File migration Fase 1 (`profiles`, `ebooks`, trigger `handle_new_user`, RLS minimum) sudah ada di `supabase/migrations/001_initial_schema.sql` dan persis menyalin SQL pada § SQL Migration Lengkap di bawah
-- Migration **belum dijalankan** di Supabase dashboard — owner perlu run SQL Editor manual sesuai GETTING_STARTED.md § FASE 1
+- Migration **sudah dijalankan** di Supabase dashboard; tabel `profiles` & `ebooks` aktif beserta trigger dan RLS
+- TypeScript types sudah di-generate dari schema live ke `lib/supabase/types.ts` via `supabase` CLI
 - Tabel fase 2 (`subscriptions`, `processed_webhook_events`) belum dibuatkan file migration; tetap deferred sesuai spec
 
 ---
@@ -148,7 +149,7 @@ CREATE TABLE profiles (
 CREATE OR REPLACE FUNCTION handle_new_user()
 RETURNS trigger AS $$
 BEGIN
-  INSERT INTO profiles (id, full_name, email)
+  INSERT INTO public.profiles (id, full_name, email)
   VALUES (
     new.id,
     NULLIF(TRIM(COALESCE(new.raw_user_meta_data->>'full_name', '')), ''),
@@ -156,7 +157,7 @@ BEGIN
   );
   RETURN new;
 END;
-$$ LANGUAGE plpgsql SECURITY DEFINER;
+$$ LANGUAGE plpgsql SECURITY DEFINER SET search_path = public;
 
 CREATE TRIGGER on_auth_user_created
   AFTER INSERT ON auth.users
@@ -238,3 +239,5 @@ CREATE TABLE processed_webhook_events (
 | 2026-04-20 | 3.2 | Lengkapi SQL fase 1 dengan RLS dan policy minimum agar migration benar-benar executable sesuai spec |
 | 2026-04-21 | 3.3 | Trigger `handle_new_user` pakai `NULLIF(TRIM(...), '')` supaya full_name kosong ditolak NOT NULL, tidak silently tersimpan sebagai string kosong |
 | 2026-04-21 | 3.4 | Tambah § Current State: file migration Fase 1 sudah ada di `supabase/migrations/001_initial_schema.sql`, tapi belum dijalankan |
+| 2026-04-21 | 3.5 | Update § Current State: migration sudah jalan di Supabase, types ter-generate dari schema live |
+| 2026-04-21 | 3.6 | Trigger `handle_new_user` sekarang explicit insert ke `public.profiles` dan set `search_path = public` agar aman dipanggil dari flow Supabase Auth |
