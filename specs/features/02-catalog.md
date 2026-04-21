@@ -1,7 +1,7 @@
 # Feature: Ebook Catalog
 
 **Status:** `Draft`  
-**Version:** 1.1  
+**Version:** 1.2  
 **Last Updated:** 2026-04-20  
 
 ---
@@ -14,7 +14,9 @@ Halaman utama setelah user login. Menampilkan daftar semua ebook yang published,
 
 ## Current State
 
-> Belum diimplementasikan.
+Belum diimplementasikan sebagai fitur katalog penuh.
+
+Yang sudah ada saat ini hanya scaffold minimum route `/dashboard/catalog` agar redirect setelah login pada fase 2 tidak berakhir ke 404. Query ebook, pengelompokan level, badge akses, dan UI katalog sebenarnya masih belum dikerjakan.
 
 ---
 
@@ -76,3 +78,4 @@ Level 3 - Premium
 |---|---|---|
 | 2026-04-15 | 1.0 | Initial spec |
 | 2026-04-20 | 1.1 | Diselaraskan dengan scope fase 1: Level 1 aktif, Level 2-3 placeholder premium |
+| 2026-04-21 | 1.2 | Current State diperjelas: route `/dashboard/catalog` baru scaffold minimum untuk mendukung redirect auth, bukan katalog final |

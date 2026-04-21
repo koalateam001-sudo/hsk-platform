@@ -1,7 +1,7 @@
 # Feature: Authentication
 
 **Status:** `Draft`  
-**Version:** 1.4  
+**Version:** 1.5  
 **Last Updated:** 2026-04-21  
 
 ---
@@ -14,7 +14,16 @@ Sistem autentikasi berbasis Supabase Auth. User bisa mendaftar dengan email dan 
 
 ## Current State
 
-> Belum diimplementasikan.
+Implementasi fase 2 auth sudah ada dan berjalan pada baseline project saat ini:
+
+- Halaman `/login`, `/register`, `/register/success`, `/forgot-password`, dan `/reset-password` sudah dibuat
+- Route handler `/auth/callback` sudah menangani return flow untuk verifikasi email dan reset password
+- Login memakai redirect precedence dengan sanitasi path internal; fallback tetap `/dashboard/catalog`
+- Register sudah mengirim `full_name` via `options.data` saat `signUp`
+- Login mendeteksi kasus email belum diverifikasi dan menyediakan tombol `Kirim ulang email verifikasi`
+- Reset password berjalan end-to-end: request email -> callback -> halaman update password -> redirect kembali ke login
+- Middleware `/dashboard/*` tetap dipakai untuk proteksi area dashboard
+- Tersedia scaffold minimum `/dashboard/catalog` agar hasil login sukses tidak berakhir ke 404 sebelum fase 3 dimulai
 
 ---
 
@@ -120,6 +129,7 @@ Sistem autentikasi berbasis Supabase Auth. User bisa mendaftar dengan email dan 
 - Saat handling redirect di login page, whitelist hanya path internal
 - Gunakan `supabase.auth.getUser()` di middleware
 - Form validation bisa menggunakan react-hook-form + zod
+- Placeholder tipis `/dashboard/catalog` boleh dipakai sementara pada fase 2 hanya untuk tujuan redirect setelah login; implementasi katalog sebenarnya tetap mengikuti `specs/features/02-catalog.md` di fase 3
 
 ### Supabase Auth - Konfigurasi Dashboard
 
@@ -153,3 +163,4 @@ Checklist ini juga diacu di `GETTING_STARTED.md`.
 | 2026-04-20 | 1.2 | Rapikan wording agar sinkron dengan fase 1 publik |
 | 2026-04-20 | 1.3 | Lengkapi flow reset password agar implementable end-to-end di aplikasi |
 | 2026-04-21 | 1.4 | Tegaskan signUp harus kirim `full_name` via `options.data` karena trigger DB sekarang menolak nilai kosong |
+| 2026-04-21 | 1.5 | Current State diperbarui: fase 2 auth sudah diimplementasikan end-to-end pada baseline project |

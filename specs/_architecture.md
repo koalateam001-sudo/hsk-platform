@@ -1,27 +1,30 @@
 # Architecture & Tech Stack
 
 **Status:** Active  
-**Version:** 2.6  
+**Version:** 2.8  
 **Last Updated:** 2026-04-21  
 
 ---
 
 ## Current State
 
-Foundation Fase 1 (GETTING_STARTED.md § FASE 1) sudah ter-scaffold di repo:
+Foundation Fase 1 (GETTING_STARTED.md § FASE 1) sudah selesai dan terverifikasi:
 
 - Project Next.js 14 + TypeScript + Tailwind CSS sudah di-init manual (bukan via `create-next-app`) dengan struktur folder sesuai spec
-- `lib/supabase/client.ts`, `lib/supabase/server.ts`, `lib/supabase/types.ts` sudah ada
+- `lib/supabase/client.ts`, `lib/supabase/server.ts` sudah ada; `lib/supabase/types.ts` sudah di-generate dari Supabase via `supabase` CLI (devDep) dan bukan placeholder lagi
 - `middleware.ts` sudah memproteksi `/dashboard/*` pakai `getUser()` dan refresh cookie session di route lain
-- `.env.example` dan `.gitignore` sudah ada
+- `.env.example` dan `.gitignore` sudah ada; `.env.local` terisi lengkap termasuk `NEXT_PUBLIC_CONTACT_URL` (WhatsApp)
+- `supabase/migrations/001_initial_schema.sql` sudah dijalankan di Supabase dashboard — tabel `profiles`, `ebooks`, trigger `handle_new_user`, dan RLS minimum aktif
+- Storage bucket `ebook-pdfs` (private) dan `ebook-covers` (public) sudah dibuat di Supabase dashboard
+- Konfigurasi Supabase Auth dashboard (Confirm email, Site URL, Redirect URLs, password min 8) sudah di-set sesuai checklist `specs/features/01-auth.md`
 - `npm install` sudah jalan, `npx tsc --noEmit` lulus tanpa error
 
 Yang belum:
 
-- `supabase/migrations/001_initial_schema.sql` belum dijalankan di Supabase dashboard (langkah manual di GETTING_STARTED.md § FASE 1)
-- `lib/supabase/types.ts` masih placeholder manual; perlu di-regenerate via `npx supabase gen types typescript --project-id <id>` setelah migration jalan
-- Halaman `(auth)`, `dashboard`, `pricing`, dan API route `/api/ebook/[id]/stream` belum dibuat (Fase 2-5)
-- `NEXT_PUBLIC_CONTACT_URL` di `.env.local` belum diisi
+- Halaman auth fase 2 sudah dibuat: `(auth)/login`, `(auth)/register`, `(auth)/register/success`, `(auth)/forgot-password`, `(auth)/reset-password`, dan `auth/callback`
+- Dashboard layout dan placeholder minimum `/dashboard/catalog` sudah dibuat untuk menopang flow login; implementasi katalog sebenarnya masih fase 3
+- Halaman `pricing`, route viewer `/dashboard/read/[ebookId]`, halaman upgrade, profile, dan API route `/api/ebook/[id]/stream` belum dibuat (Fase 3-5)
+- Domain custom belum dibeli (opsional, bisa pakai subdomain Vercel saat deploy)
 
 ---
 
@@ -214,3 +217,5 @@ NEXT_PUBLIC_GA_MEASUREMENT_ID=
 | 2026-04-21 | 2.4 | Rapikan ASCII tree struktur folder; pisahkan `app/auth/callback/` dari route group `app/(auth)/` agar tidak ambigu |
 | 2026-04-21 | 2.5 | Deklarasikan nama canonical Supabase Storage buckets (`ebook-pdfs`, `ebook-covers`) agar tidak perlu ditebak dari SOP |
 | 2026-04-21 | 2.6 | Tambah § Current State: scaffolding Next.js 14, lib/supabase, middleware, dan env files Fase 1 sudah jalan |
+| 2026-04-21 | 2.7 | Update § Current State: migration sudah jalan, buckets + auth dashboard ter-konfigurasi, types ter-regenerate dari Supabase |
+| 2026-04-21 | 2.8 | Update § Current State: route auth fase 2 sudah terimplementasi, plus dashboard scaffold minimum untuk target redirect login |
