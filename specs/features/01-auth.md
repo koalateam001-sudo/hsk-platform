@@ -1,7 +1,7 @@
 # Feature: Authentication
 
 **Status:** `Draft`  
-**Version:** 1.5  
+**Version:** 1.7  
 **Last Updated:** 2026-04-21  
 
 ---
@@ -131,6 +131,21 @@ Implementasi fase 2 auth sudah ada dan berjalan pada baseline project saat ini:
 - Form validation bisa menggunakan react-hook-form + zod
 - Placeholder tipis `/dashboard/catalog` boleh dipakai sementara pada fase 2 hanya untuk tujuan redirect setelah login; implementasi katalog sebenarnya tetap mengikuti `specs/features/02-catalog.md` di fase 3
 
+### Email Delivery Notes
+
+- Verification email, resend verification, dan reset password tetap memakai flow Auth Supabase
+- Jika custom SMTP diaktifkan, perubahan yang diharapkan hanya pada layer delivery email, bukan pada route auth aplikasi
+- Karena itu route `/register/success`, tombol resend, `/forgot-password`, `/reset-password`, dan `/auth/callback` tidak perlu berubah hanya karena SMTP diganti
+- Yang perlu diverifikasi saat custom SMTP aktif:
+  - email benar-benar terkirim dari sender/domain yang benar
+  - link di email tetap mengarah ke `NEXT_PUBLIC_APP_URL` dan callback app
+  - inbox/spam placement masih acceptable untuk launch
+- Jika user belum menerima email verifikasi, UI auth tidak perlu membedakan secara teknis antara email masuk spam dan delivery gagal
+- Copy minimum yang harus didukung:
+  - "Email verifikasi belum masuk? Cek folder spam/promosi atau kirim ulang beberapa saat lagi."
+- Jika user tetap tidak menerima email setelah beberapa percobaan, arahkan ke kanal bantuan yang sama dengan `NEXT_PUBLIC_CONTACT_URL`
+- Resend verification mengikuti cooldown 60 detik di aplikasi, sedangkan batas maksimum praktis mengikuti rate limit Supabase/provider
+
 ### Supabase Auth - Konfigurasi Dashboard
 
 Spec ini mengasumsikan setting Supabase berikut sudah di-set manual oleh owner **sebelum implementasi auth fase 1 dijalankan**. Kalau tidak, behavior tidak akan sesuai spec:
@@ -142,6 +157,7 @@ Spec ini mengasumsikan setting Supabase berikut sudah di-set manual oleh owner *
 | Redirect URLs | Auth -> URL Configuration -> Redirect URLs | `http://localhost:3000/**` dan domain produksi |
 | Email template confirm signup | Auth -> Email Templates | Bahasa Indonesia, tetap gunakan placeholder URL |
 | Email template reset password | Auth -> Email Templates | Bahasa Indonesia |
+| SMTP custom (opsional dev, direkomendasikan untuk launch publik) | Auth -> Email / SMTP Settings | Sender, host, port, auth, dan enkripsi valid |
 | Password min length | Auth -> Policies | 8 |
 
 Checklist ini juga diacu di `GETTING_STARTED.md`.
@@ -164,3 +180,5 @@ Checklist ini juga diacu di `GETTING_STARTED.md`.
 | 2026-04-20 | 1.3 | Lengkapi flow reset password agar implementable end-to-end di aplikasi |
 | 2026-04-21 | 1.4 | Tegaskan signUp harus kirim `full_name` via `options.data` karena trigger DB sekarang menolak nilai kosong |
 | 2026-04-21 | 1.5 | Current State diperbarui: fase 2 auth sudah diimplementasikan end-to-end pada baseline project |
+| 2026-04-21 | 1.6 | Klarifikasi bahwa custom SMTP tidak mengubah auth routes, tetapi menambah kebutuhan verifikasi delivery dan setup dashboard |
+| 2026-04-21 | 1.7 | Tambah keputusan operasional auth saat custom SMTP aktif: failure handling, support fallback, dan resend soft limit |

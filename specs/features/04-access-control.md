@@ -1,8 +1,8 @@
 # Feature: Access Control
 
 **Status:** `Draft`  
-**Version:** 2.1  
-**Last Updated:** 2026-04-20  
+**Version:** 2.3  
+**Last Updated:** 2026-04-21  
 
 ---
 
@@ -14,7 +14,17 @@ Sistem kontrol akses untuk fase 1 memastikan user harus login untuk masuk ke are
 
 ## Current State
 
-> Belum diimplementasikan.
+Implementasi access control fase 3 dasar sudah mulai berjalan:
+
+- Middleware tetap memproteksi seluruh `/dashboard/*`
+- Di katalog, ebook Level 2-3 tampil sebagai premium placeholder
+- Klik ebook premium mengarah ke `/dashboard/upgrade`
+- Route baca `/dashboard/read/[ebookId]` sudah melakukan gate server-side:
+  - `admin` boleh masuk
+  - Level 1 boleh masuk
+  - selain itu diarahkan ke `/dashboard/upgrade`
+
+API stream khusus PDF belum dibuat; itu tetap menjadi bagian fase 4.
 
 ---
 
@@ -88,3 +98,5 @@ Halaman ini berfungsi sebagai placeholder roadmap premium, bukan checkout aktif.
 | 2026-04-15 | 1.0 | Initial spec |
 | 2026-04-16 | 2.0 | Access gate berbasis entitlement subscription |
 | 2026-04-20 | 2.1 | Scope fase 1 disederhanakan: Level 1 aktif, Level 2-3 placeholder premium, tanpa membership real |
+| 2026-04-21 | 2.2 | Current State diperbarui: katalog dan route baca placeholder sudah memakai access gate server-side dasar untuk fase 3 |
+| 2026-04-21 | 2.3 | Sinkronisasi metadata dokumen dengan kondisi spec terbaru agar version header dan tanggal tidak tertinggal |

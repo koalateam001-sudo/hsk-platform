@@ -2,6 +2,8 @@
 
 Panduan langkah demi langkah untuk memulai development. Dokumen ini sudah diselaraskan dengan **MVP publik fase 1**: auth, katalog, viewer Level 1, landing page, pricing placeholder, profile sederhana, dan deploy public. Payment/membership belum dikerjakan sekarang.
 
+Catatan status repo saat ini: implementasi sudah mencapai **Fase 3**. Artinya auth, katalog dasar, halaman upgrade, dan route baca placeholder sudah ada. Fase 4 di bawah ini berarti menyempurnakan route baca tersebut menjadi PDF viewer penuh, bukan membuat route dari nol.
+
 ---
 
 ## Bagian 1: Persiapan Akun & Tools
@@ -21,6 +23,10 @@ Beberapa langkah ini harus dikerjakan manual.
   - URL Configuration -> Site URL: `http://localhost:3000`
   - URL Configuration -> Redirect URLs: tambahkan `http://localhost:3000/**`
   - Email Templates -> Confirm signup dan Reset password -> sesuaikan bahasa Indonesia
+  - Jika custom SMTP akan dipakai untuk launch publik:
+    - aktifkan SMTP di Supabase Auth dashboard
+    - isi sender name / sender email / host / port / username / password
+    - verifikasi SPF / DKIM / DMARC domain pengirim
   - Policies -> minimum password length: 8
 - [ ] Buat storage bucket:
   - `ebook-covers` -> public
@@ -37,6 +43,13 @@ Referensi: `specs/features/01-auth.md`
 
 - [ ] Daftar di https://vercel.com
 - [ ] Connect repo GitHub
+
+### 1.3a Keputusan SMTP Sebelum Produksi
+
+- [ ] Pilih satu provider custom SMTP final untuk produksi
+  - kandidat awal: Brevo / Resend / AWS SES
+- [ ] Validasi kredensial provider SMTP
+- [ ] Pastikan sender/domain yang dipakai memang dimiliki dan dikelola oleh owner proyek
 
 ### 1.4 Install Tools di Laptop
 
@@ -162,7 +175,7 @@ Update Current State setelah selesai.
 Baca specs/features/03-pdf-viewer.md.
 
 Implementasikan:
-1. Halaman /dashboard/read/[ebookId]
+1. Sempurnakan halaman /dashboard/read/[ebookId] yang saat ini masih placeholder
 2. Komponen PdfViewer menggunakan react-pdf
 3. API route /api/ebook/[id]/stream
 
@@ -178,7 +191,7 @@ Update Current State setelah selesai.
 
 - Upload 1 PDF test ke bucket private
 - Update `storage_path` ebook
-- Test viewer untuk ebook Level 1
+- Test viewer penuh untuk ebook Level 1
 
 ---
 
@@ -266,11 +279,19 @@ Saat ada perubahan:
 
 ## Bagian 5: Checklist Sebelum Launch Publik Fase 1
 
+- [ ] Jika custom SMTP dipakai, provider final sudah dipilih eksplisit
 - [ ] Semua env variable Supabase sudah ter-set di Vercel
 - [ ] `NEXT_PUBLIC_APP_URL` sudah ter-set sesuai domain aktif
 - [ ] `NEXT_PUBLIC_CONTACT_URL` sudah ter-set dan mengarah ke kanal kontak final
 - [ ] Supabase auth email template sudah benar
+- [ ] Jika custom SMTP dipakai, sender identity dan kredensial SMTP sudah tervalidasi
+- [ ] Jika custom SMTP dipakai, SPF/DKIM/DMARC domain pengirim sudah benar
 - [ ] Supabase Site URL dan Redirect URLs sudah diganti dari localhost ke domain publik
+- [ ] Signup berhasil dengan flow email aktif
+- [ ] Email verifikasi benar-benar terkirim
+- [ ] Link confirm email benar-benar mengarah dan berfungsi
+- [ ] Forgot password berhasil
+- [ ] Reset password berhasil
 - [ ] Minimal ada ebook Level 1 yang benar-benar bisa dibaca
 - [ ] Level 2-3 tampil sebagai premium placeholder dengan copy yang jujur
 - [ ] Domain sudah terhubung jika diperlukan

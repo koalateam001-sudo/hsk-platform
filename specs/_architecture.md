@@ -1,7 +1,7 @@
 # Architecture & Tech Stack
 
 **Status:** Active  
-**Version:** 2.8  
+**Version:** 3.0  
 **Last Updated:** 2026-04-21  
 
 ---
@@ -19,11 +19,13 @@ Foundation Fase 1 (GETTING_STARTED.md § FASE 1) sudah selesai dan terverifikasi
 - Konfigurasi Supabase Auth dashboard (Confirm email, Site URL, Redirect URLs, password min 8) sudah di-set sesuai checklist `specs/features/01-auth.md`
 - `npm install` sudah jalan, `npx tsc --noEmit` lulus tanpa error
 
-Yang belum:
+Status implementasi lanjutan:
 
-- Halaman auth fase 2 sudah dibuat: `(auth)/login`, `(auth)/register`, `(auth)/register/success`, `(auth)/forgot-password`, `(auth)/reset-password`, dan `auth/callback`
-- Dashboard layout dan placeholder minimum `/dashboard/catalog` sudah dibuat untuk menopang flow login; implementasi katalog sebenarnya masih fase 3
-- Halaman `pricing`, route viewer `/dashboard/read/[ebookId]`, halaman upgrade, profile, dan API route `/api/ebook/[id]/stream` belum dibuat (Fase 3-5)
+- Fase 2 auth sudah dibuat lengkap: `(auth)/login`, `(auth)/register`, `(auth)/register/success`, `(auth)/forgot-password`, `(auth)/reset-password`, dan `auth/callback`
+- Fase 3 dasar juga sudah berjalan: `/dashboard/catalog`, komponen katalog, `/dashboard/upgrade`, dan route `/dashboard/read/[ebookId]` sebagai viewer placeholder dengan access gate server-side
+- Halaman `/` masih placeholder awal; landing page final belum dibuat
+- Halaman `pricing` dan `profile` belum dibuat
+- API route `/api/ebook/[id]/stream` dan PDF viewer penuh berbasis `react-pdf` belum dibuat (Fase 4)
 - Domain custom belum dibeli (opsional, bisa pakai subdomain Vercel saat deploy)
 
 ---
@@ -39,7 +41,7 @@ Yang belum:
 | PDF Viewer | react-pdf | Latest | Render PDF di browser |
 | Hosting | Vercel | - | Cukup untuk deploy publik fase 1 |
 | Storage PDF | Supabase Storage | - | Private bucket untuk PDF, public bucket untuk cover |
-| Email | Supabase built-in | - | Email verifikasi dan reset password |
+| Email | Supabase Auth email flow | - | Saat ini pakai delivery bawaan Supabase; custom SMTP dapat dikonfigurasi di dashboard tanpa mengubah flow aplikasi |
 | Analytics | Google Analytics | GA4 | Opsional, cukup untuk MVP |
 | Payment | Mayar (deferred) | - | Direncanakan untuk fase berikutnya, bukan scope fase 1 |
 | Admin | Supabase Dashboard | - | Tidak ada admin panel custom di MVP |
@@ -155,6 +157,17 @@ if (!user) redirect('/login')
 - Log error ke `console.error`
 - UI tampilkan error message yang user-friendly
 
+### Email Delivery Boundary
+
+- Verification email dan reset password tetap dianggap bagian dari Supabase Auth flow
+- Jika custom SMTP diaktifkan, konfigurasi utamanya ada di Supabase dashboard, bukan di Next.js app runtime
+- Artinya, app tidak perlu menambah mailer backend hanya untuk verifikasi email / reset password
+- Risiko tambahan saat custom SMTP aktif:
+  - kredensial SMTP salah
+  - sender identity belum tervalidasi
+  - SPF/DKIM/DMARC belum benar
+  - rate limit atau deliverability provider mengganggu auth flow
+
 ---
 
 ## Keputusan Teknis
@@ -202,6 +215,7 @@ NEXT_PUBLIC_GA_MEASUREMENT_ID=
 
 > `NEXT_PUBLIC_CONTACT_URL` adalah sumber kebenaran tunggal untuk semua CTA `Hubungi Kami` pada fase 1.
 > Environment variable payment belum dibutuhkan di fase 1. Saat fase membership dimulai, env Mayar ditambahkan kembali melalui update spec.
+> Jika custom SMTP diaktifkan, konfigurasi SMTP tidak disimpan sebagai env aplikasi Next.js kecuali ada perubahan arsitektur eksplisit; source of truth tetap Supabase Auth dashboard.
 
 ---
 
@@ -219,3 +233,5 @@ NEXT_PUBLIC_GA_MEASUREMENT_ID=
 | 2026-04-21 | 2.6 | Tambah § Current State: scaffolding Next.js 14, lib/supabase, middleware, dan env files Fase 1 sudah jalan |
 | 2026-04-21 | 2.7 | Update § Current State: migration sudah jalan, buckets + auth dashboard ter-konfigurasi, types ter-regenerate dari Supabase |
 | 2026-04-21 | 2.8 | Update § Current State: route auth fase 2 sudah terimplementasi, plus dashboard scaffold minimum untuk target redirect login |
+| 2026-04-21 | 2.9 | Klarifikasi boundary email: auth tetap via Supabase Auth, custom SMTP diposisikan sebagai layer delivery operasional |
+| 2026-04-21 | 3.0 | Sinkronisasi Current State dengan repo aktual: fase 2 dan fase 3 dasar sudah jalan, viewer route masih placeholder, sedangkan landing/pricing/profile dan API stream belum dibuat |
