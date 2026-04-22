@@ -1,8 +1,8 @@
 # Feature: User Profile
 
 **Status:** `Draft`  
-**Version:** 1.1  
-**Last Updated:** 2026-04-21  
+**Version:** 1.2  
+**Last Updated:** 2026-04-22  
 
 ---
 
@@ -14,7 +14,14 @@ Halaman profile sederhana untuk fase 1. Tujuannya bukan mengelola subscription, 
 
 ## Current State
 
-> Belum diimplementasikan.
+Fase 5 selesai:
+
+- `app/dashboard/profile/page.tsx` adalah Server Component, di-gate oleh proxy `/dashboard/*` sehingga user belum login otomatis diarahkan ke `/login?redirect=/dashboard/profile`
+- Blok "Informasi Akun" menampilkan `full_name`, `email`, dan `created_at` yang di-format `id-ID` (tanpa baris role mentah — REQ-05/AC-08)
+- Blok "Status Akses" memakai mapping role → label: `admin` → `Admin - semua level terbuka` (tanpa CTA kontak), selain itu `Gratis - Level 1 aktif` dengan subteks `Premium segera hadir` (REQ-04)
+- CTA `Hubungi Kami` memakai komponen `components/marketing/contact-cta.tsx` yang membaca `NEXT_PUBLIC_CONTACT_URL` via `lib/contact.ts`, dan disembunyikan ketika `role = 'admin'` (REQ-06)
+- Link "Kembali ke Katalog" mengarah ke `/dashboard/catalog` (REQ-07)
+- Navbar dashboard sudah menambahkan link `Profile` di header sehingga user bisa berpindah dari mana saja di area dashboard
 
 ---
 
@@ -96,3 +103,4 @@ Halaman profile sederhana untuk fase 1. Tujuannya bukan mengelola subscription, 
 |---|---|---|
 | 2026-04-20 | 1.0 | Tambah spec profile page fase 1 agar route `/dashboard/profile` punya anchor SDD yang jelas |
 | 2026-04-21 | 1.1 | Pisahkan blok Informasi Akun dan Status Akses; tegaskan mapping role -> label UI agar tidak redundan menampilkan role mentah |
+| 2026-04-22 | 1.2 | Current State diperbarui: halaman `/dashboard/profile` sudah terimplementasi dengan blok Informasi Akun, Status Akses berbasis role, dan CTA `Hubungi Kami` dari util kontak terpusat |

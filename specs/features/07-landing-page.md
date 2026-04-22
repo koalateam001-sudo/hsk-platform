@@ -1,8 +1,8 @@
 # Feature: Landing Page & Pricing
 
 **Status:** `Draft`  
-**Version:** 1.2  
-**Last Updated:** 2026-04-21  
+**Version:** 1.3  
+**Last Updated:** 2026-04-22  
 
 ---
 
@@ -14,7 +14,13 @@ Landing page publik yang sederhana untuk menjelaskan produk dan CTA utama ke reg
 
 ## Current State
 
-> Belum diimplementasikan.
+Fase 5 selesai:
+
+- `app/page.tsx` adalah Server Component yang melakukan `supabase.auth.getUser()` dan `redirect('/dashboard/catalog')` bila user sudah login (REQ-05)
+- Landing publik menampilkan hero, blok "Kenapa Kami", teaser premium, serta CTA `Mulai Gratis` → `/register` dan `Lihat Paket` → `/pricing`
+- `app/pricing/page.tsx` publik menampilkan paket Gratis (Level 1) dan Premium (Level 2-3, badge "Segera Hadir"), dengan CTA final `Hubungi Kami` via `NEXT_PUBLIC_CONTACT_URL`
+- Navbar publik dan footer dipakai bersama oleh `/` dan `/pricing` (`components/marketing/public-navbar.tsx`, `components/marketing/public-footer.tsx`)
+- Kanal kontak dipusatkan di `lib/contact.ts` dan `components/marketing/contact-cta.tsx`, dipakai oleh landing/pricing/upgrade/profile
 
 ---
 
@@ -102,3 +108,4 @@ Pricing page tetap menampilkan:
 | 2026-04-16 | 1.0 | Initial spec |
 | 2026-04-20 | 1.1 | Pricing/upgrade diubah jadi placeholder roadmap premium; checkout ditunda |
 | 2026-04-21 | 1.2 | Tegaskan bahwa redirect REQ-05 dilakukan di Server Component `app/page.tsx`, bukan middleware |
+| 2026-04-22 | 1.3 | Current State diperbarui: landing page `/`, pricing page `/pricing`, navbar+footer publik, dan util kontak terpusat sudah jalan di Fase 5 |

@@ -4,7 +4,7 @@ import { ResetPasswordForm } from "@/components/auth/reset-password-form";
 import { createServerClient } from "@/lib/supabase/server";
 
 export default async function ResetPasswordPage() {
-  const supabase = createServerClient();
+  const supabase = await createServerClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();

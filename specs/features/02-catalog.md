@@ -1,8 +1,8 @@
 # Feature: Ebook Catalog
 
 **Status:** `Draft`  
-**Version:** 1.3  
-**Last Updated:** 2026-04-21  
+**Version:** 1.4  
+**Last Updated:** 2026-04-22  
 
 ---
 
@@ -22,6 +22,7 @@ Implementasi fase 3 untuk katalog dasar sudah berjalan:
 - Klik ebook Level 1 menuju route baca
 - Klik ebook Level 2-3 menuju halaman upgrade
 - Empty state dan error state dasar sudah tersedia
+- Jika cover image gagal load di browser, card otomatis fallback ke placeholder
 
 ---
 
@@ -85,3 +86,4 @@ Level 3 - Premium
 | 2026-04-20 | 1.1 | Diselaraskan dengan scope fase 1: Level 1 aktif, Level 2-3 placeholder premium |
 | 2026-04-21 | 1.2 | Current State diperjelas: route `/dashboard/catalog` baru scaffold minimum untuk mendukung redirect auth, bukan katalog final |
 | 2026-04-21 | 1.3 | Current State diperbarui: katalog fase 3 dasar sudah diimplementasikan dengan query server-side, grouping per level, dan routing akses |
+| 2026-04-22 | 1.4 | Current State diperbarui: fallback placeholder saat cover image gagal load sudah diimplementasikan pada card katalog |

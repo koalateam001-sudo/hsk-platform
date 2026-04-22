@@ -5,7 +5,7 @@ import type { Tables } from "@/lib/supabase/types";
 const levels = [1, 2, 3] as const;
 
 export default async function DashboardCatalogPage() {
-  const supabase = createServerClient();
+  const supabase = await createServerClient();
   const result = await supabase
     .from("ebooks")
     .select("*")

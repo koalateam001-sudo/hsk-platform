@@ -9,7 +9,7 @@ export async function GET(request: NextRequest) {
   const tokenHash = requestUrl.searchParams.get("token_hash");
   const type = requestUrl.searchParams.get("type") as EmailOtpType | null;
   const nextPath = sanitizeRedirectPath(requestUrl.searchParams.get("next"));
-  const supabase = createServerClient();
+  const supabase = await createServerClient();
 
   let authError = false;
 

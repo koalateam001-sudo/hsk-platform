@@ -6,19 +6,20 @@ import { getLoginRedirectPath } from "@/lib/auth";
 import { createServerClient } from "@/lib/supabase/server";
 
 type LoginPageProps = {
-  searchParams?: {
+  searchParams?: Promise<{
     redirect?: string;
     message?: string;
-  };
+  }>;
 };
 
 export default async function LoginPage({ searchParams }: LoginPageProps) {
-  const supabase = createServerClient();
+  const supabase = await createServerClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();
 
-  const redirectTo = getLoginRedirectPath(searchParams?.redirect);
+  const resolvedSearchParams = await searchParams;
+  const redirectTo = getLoginRedirectPath(resolvedSearchParams?.redirect);
 
   if (user) {
     redirect(redirectTo);
@@ -37,7 +38,7 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
         </>
       }
     >
-      <LoginForm redirectTo={redirectTo} infoMessage={searchParams?.message} />
+      <LoginForm redirectTo={redirectTo} infoMessage={resolvedSearchParams?.message} />
     </AuthShell>
   );
 }

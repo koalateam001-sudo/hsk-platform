@@ -1,8 +1,8 @@
 # Architecture & Tech Stack
 
 **Status:** Active  
-**Version:** 3.0  
-**Last Updated:** 2026-04-21  
+**Version:** 3.5  
+**Last Updated:** 2026-04-22  
 
 ---
 
@@ -12,7 +12,7 @@ Foundation Fase 1 (GETTING_STARTED.md § FASE 1) sudah selesai dan terverifikasi
 
 - Project Next.js 14 + TypeScript + Tailwind CSS sudah di-init manual (bukan via `create-next-app`) dengan struktur folder sesuai spec
 - `lib/supabase/client.ts`, `lib/supabase/server.ts` sudah ada; `lib/supabase/types.ts` sudah di-generate dari Supabase via `supabase` CLI (devDep) dan bukan placeholder lagi
-- `middleware.ts` sudah memproteksi `/dashboard/*` pakai `getUser()` dan refresh cookie session di route lain
+- `proxy.ts` sudah memproteksi `/dashboard/*` pakai `getUser()` dan refresh cookie session di route lain
 - `.env.example` dan `.gitignore` sudah ada; `.env.local` terisi lengkap termasuk `NEXT_PUBLIC_CONTACT_URL` (WhatsApp)
 - `supabase/migrations/001_initial_schema.sql` sudah dijalankan di Supabase dashboard — tabel `profiles`, `ebooks`, trigger `handle_new_user`, dan RLS minimum aktif
 - Storage bucket `ebook-pdfs` (private) dan `ebook-covers` (public) sudah dibuat di Supabase dashboard
@@ -22,10 +22,10 @@ Foundation Fase 1 (GETTING_STARTED.md § FASE 1) sudah selesai dan terverifikasi
 Status implementasi lanjutan:
 
 - Fase 2 auth sudah dibuat lengkap: `(auth)/login`, `(auth)/register`, `(auth)/register/success`, `(auth)/forgot-password`, `(auth)/reset-password`, dan `auth/callback`
-- Fase 3 dasar juga sudah berjalan: `/dashboard/catalog`, komponen katalog, `/dashboard/upgrade`, dan route `/dashboard/read/[ebookId]` sebagai viewer placeholder dengan access gate server-side
-- Halaman `/` masih placeholder awal; landing page final belum dibuat
-- Halaman `pricing` dan `profile` belum dibuat
-- API route `/api/ebook/[id]/stream` dan PDF viewer penuh berbasis `react-pdf` belum dibuat (Fase 4)
+- Fase 3 dasar juga sudah berjalan: `/dashboard/catalog`, komponen katalog, `/dashboard/upgrade`, dan route `/dashboard/read/[ebookId]` dengan access gate server-side
+- Fase 4 PDF viewer sudah selesai: `react-pdf@^9` + `pdfjs-dist@^4` terpasang; komponen `components/pdf/pdf-viewer.tsx` memakai signed URL dari API; API route `app/api/ebook/[id]/stream/route.ts` generate signed URL 15 menit via service role client (`lib/supabase/service.ts`) dan sudah membawa gate 401/403/404 yang sama dengan route baca
+- Upgrade Next.js 16.2.4 + React 19.2.5 + `@supabase/ssr@0.10.2` sudah selesai (`build` lulus, `tsc --noEmit` lulus); breaking changes Next.js 15–16 sudah di-handle (lihat § Pola Kode)
+- Fase 5 selesai: landing page `/` (Server Component dengan redirect ke `/dashboard/catalog` untuk user login), `/pricing`, dan `/dashboard/profile` sudah jalan; navbar+footer publik di `components/marketing/`; util kontak terpusat di `lib/contact.ts` + `components/marketing/contact-cta.tsx` dipakai oleh landing/pricing/upgrade/profile
 - Domain custom belum dibeli (opsional, bisa pakai subdomain Vercel saat deploy)
 
 ---
@@ -34,11 +34,13 @@ Status implementasi lanjutan:
 
 | Layer | Teknologi | Versi | Alasan |
 |---|---|---|---|
-| Framework | Next.js | 14+ (App Router) | SSR/SSG untuk SEO, mudah di-extend |
+| Framework | Next.js | 16.x (App Router, Turbopack) | SSR/SSG untuk SEO, mudah di-extend |
+| Runtime UI | React | 19.x | Concurrent features, latest stable |
 | Language | TypeScript | 5.x | Type safety |
 | Styling | Tailwind CSS | 3.x | Cepat dan konsisten |
 | Database & Auth | Supabase | Latest | Built-in auth, storage, Postgres, RLS |
-| PDF Viewer | react-pdf | Latest | Render PDF di browser |
+| Supabase SSR | @supabase/ssr | 0.10.x | Cookie-based session management untuk Next.js |
+| PDF Viewer | react-pdf | 9.x | Render PDF di browser |
 | Hosting | Vercel | - | Cukup untuk deploy publik fase 1 |
 | Storage PDF | Supabase Storage | - | Private bucket untuk PDF, public bucket untuk cover |
 | Email | Supabase Auth email flow | - | Saat ini pakai delivery bawaan Supabase; custom SMTP dapat dikonfigurasi di dashboard tanpa mengubah flow aplikasi |
@@ -98,10 +100,15 @@ Status implementasi lanjutan:
 │   ├── pdf/
 │   ├── ebook/
 │   ├── auth/
+│   ├── marketing/
 │   └── ui/
 ├── lib/
-│   └── supabase/
-├── middleware.ts
+│   ├── supabase/
+│   ├── access.ts
+│   ├── auth.ts
+│   └── contact.ts
+├── proxy.ts
+├── canvas-stub.js
 ├── specs/
 └── CLAUDE.md
 ```
@@ -128,10 +135,13 @@ Status implementasi lanjutan:
 
 ### Authentication Pattern
 
+> **Next.js 16+:** `createServerClient` adalah `async function` — wajib di-`await`.
+> **Next.js 16+:** `params` dan `searchParams` di page/route handler adalah `Promise` — wajib di-`await`.
+
 ```typescript
 import { createServerClient } from '@/lib/supabase/server'
 
-const supabase = createServerClient()
+const supabase = await createServerClient()
 const {
   data: { user },
 } = await supabase.auth.getUser()
@@ -139,11 +149,32 @@ const {
 if (!user) redirect('/login')
 ```
 
+Dynamic route page:
+```typescript
+// BENAR (Next.js 16+)
+type Props = { params: Promise<{ id: string }> };
+export default async function Page({ params }: Props) {
+  const { id } = await params;
+  // ...
+}
+```
+
+`searchParams` di page:
+```typescript
+// BENAR (Next.js 16+)
+type Props = { searchParams?: Promise<{ q?: string }> };
+export default async function Page({ searchParams }: Props) {
+  const resolved = await searchParams;
+  // gunakan resolved?.q
+}
+```
+
 ### Route Protection
 
-- `middleware.ts` hanya cek auth untuk `/dashboard/*`
+- `proxy.ts` (dahulu `middleware.ts`, rename di Next.js 16) hanya cek auth untuk `/dashboard/*`
+- Export function wajib bernama `proxy` (bukan `middleware`) di Next.js 16+
 - Gunakan `getUser()`, bukan `getSession()`
-- Pengecekan akses premium placeholder dilakukan di Server Component atau API Route, bukan di middleware
+- Pengecekan akses premium placeholder dilakukan di Server Component atau API Route, bukan di proxy
 - Flow verifikasi email dan reset password boleh melewati route callback auth khusus sebelum diarahkan ke halaman final
 
 ### TypeScript
@@ -235,3 +266,8 @@ NEXT_PUBLIC_GA_MEASUREMENT_ID=
 | 2026-04-21 | 2.8 | Update § Current State: route auth fase 2 sudah terimplementasi, plus dashboard scaffold minimum untuk target redirect login |
 | 2026-04-21 | 2.9 | Klarifikasi boundary email: auth tetap via Supabase Auth, custom SMTP diposisikan sebagai layer delivery operasional |
 | 2026-04-21 | 3.0 | Sinkronisasi Current State dengan repo aktual: fase 2 dan fase 3 dasar sudah jalan, viewer route masih placeholder, sedangkan landing/pricing/profile dan API stream belum dibuat |
+| 2026-04-21 | 3.1 | Update Current State: Fase 4 selesai — `react-pdf` dan `pdfjs-dist` terpasang, komponen `PdfViewer`, service role client di `lib/supabase/service.ts`, dan API route `/api/ebook/[id]/stream` dengan signed URL 15 menit sudah jalan |
+| 2026-04-21 | 3.2 | Dep pinning: `react-pdf` dikunci ke `^9` dan `pdfjs-dist` ke `^4` karena pdfjs v5 `.mjs` ESM gagal di-bundle oleh Next 14 webpack; `next.config.mjs` mendapat `transpilePackages` + alias `canvas=false` sebagai safety net |
+| 2026-04-22 | 3.3 | Upgrade Next.js 14.2.15 → 16.2.4, React 18 → 19.2.5, `@supabase/ssr` 0.5.2 → 0.10.2, eslint 8 → 9; rename `middleware.ts` → `proxy.ts`; migrasi webpack config ke Turbopack (`canvas-stub.js`); async `cookies()`, `params`, `searchParams` di semua server components dan route handlers |
+| 2026-04-22 | 3.4 | Koreksi wording Current State agar konsisten dengan implementasi Next.js 16: proteksi route disebut `proxy.ts` (bukan `middleware.ts`) |
+| 2026-04-22 | 3.5 | Fase 5 selesai: landing `/`, `/pricing`, `/dashboard/profile`; tambah `components/marketing/` (public navbar, footer, contact CTA) dan `lib/contact.ts` sebagai sumber tunggal `NEXT_PUBLIC_CONTACT_URL` |

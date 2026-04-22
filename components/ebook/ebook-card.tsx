@@ -1,4 +1,7 @@
+"use client";
+
 import Link from "next/link";
+import { useState } from "react";
 import type { Tables } from "@/lib/supabase/types";
 
 type EbookCardProps = {
@@ -29,6 +32,9 @@ function getHref(ebook: Tables<"ebooks">) {
 
 export function EbookCard({ ebook }: EbookCardProps) {
   const badge = getAccessBadge(ebook.level);
+  const [hasCoverError, setHasCoverError] = useState(false);
+  const coverUrl = ebook.cover_url ?? "";
+  const showCoverImage = Boolean(coverUrl) && !hasCoverError;
 
   return (
     <Link
@@ -36,12 +42,13 @@ export function EbookCard({ ebook }: EbookCardProps) {
       className="group flex h-full flex-col overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm transition hover:-translate-y-1 hover:border-slate-300 hover:shadow-md"
     >
       <div className="aspect-[4/5] overflow-hidden bg-slate-100">
-        {ebook.cover_url ? (
+        {showCoverImage ? (
           // eslint-disable-next-line @next/next/no-img-element
           <img
-            src={ebook.cover_url}
+            src={coverUrl}
             alt={`Cover ${ebook.title}`}
             className="h-full w-full object-cover transition duration-300 group-hover:scale-[1.02]"
+            onError={() => setHasCoverError(true)}
           />
         ) : (
           <div className="flex h-full items-center justify-center px-6 text-center text-sm text-slate-400">

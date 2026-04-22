@@ -5,7 +5,7 @@ import { RegisterForm } from "@/components/auth/register-form";
 import { createServerClient } from "@/lib/supabase/server";
 
 export default async function RegisterPage() {
-  const supabase = createServerClient();
+  const supabase = await createServerClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();

@@ -5,16 +5,16 @@ import { ResendVerificationButton } from "@/components/auth/resend-verification-
 import { createServerClient } from "@/lib/supabase/server";
 
 type RegisterSuccessPageProps = {
-  searchParams?: {
+  searchParams?: Promise<{
     email?: string;
     fullName?: string;
-  };
+  }>;
 };
 
 export default async function RegisterSuccessPage({
   searchParams,
 }: RegisterSuccessPageProps) {
-  const supabase = createServerClient();
+  const supabase = await createServerClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();
@@ -23,8 +23,9 @@ export default async function RegisterSuccessPage({
     redirect("/dashboard/catalog");
   }
 
-  const email = searchParams?.email?.trim();
-  const fullName = searchParams?.fullName?.trim();
+  const resolvedSearchParams = await searchParams;
+  const email = resolvedSearchParams?.email?.trim();
+  const fullName = resolvedSearchParams?.fullName?.trim();
 
   return (
     <AuthShell

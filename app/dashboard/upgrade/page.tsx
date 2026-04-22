@@ -1,12 +1,7 @@
 import Link from "next/link";
-
-function getContactUrl() {
-  return process.env.NEXT_PUBLIC_CONTACT_URL?.trim() || "";
-}
+import { ContactCta } from "@/components/marketing/contact-cta";
 
 export default function DashboardUpgradePage() {
-  const contactUrl = getContactUrl();
-
   return (
     <section className="rounded-3xl border border-slate-200 bg-white p-8 shadow-sm">
       <div className="max-w-3xl space-y-6">
@@ -36,18 +31,7 @@ export default function DashboardUpgradePage() {
         </div>
 
         <div className="flex flex-wrap gap-3">
-          {contactUrl ? (
-            <a
-              href={contactUrl}
-              className="rounded-2xl bg-slate-900 px-5 py-3 text-sm font-medium text-white transition hover:bg-slate-700"
-            >
-              Hubungi Kami
-            </a>
-          ) : (
-            <div className="rounded-2xl border border-slate-300 px-5 py-3 text-sm text-slate-600">
-              Hubungi kami melalui kanal kontak utama yang sudah disiapkan owner.
-            </div>
-          )}
+          <ContactCta />
 
           <Link
             href="/dashboard/catalog"

@@ -10,7 +10,7 @@ export default async function DashboardLayout({
   children: ReactNode;
 }) {
   type ProfileName = Pick<Tables<"profiles">, "full_name">;
-  const supabase = createServerClient();
+  const supabase = await createServerClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();
@@ -46,6 +46,12 @@ export default async function DashboardLayout({
               className="text-sm font-medium text-slate-600 transition hover:text-slate-900"
             >
               Premium
+            </Link>
+            <Link
+              href="/dashboard/profile"
+              className="text-sm font-medium text-slate-600 transition hover:text-slate-900"
+            >
+              Profile
             </Link>
             <LogoutButton />
           </div>
