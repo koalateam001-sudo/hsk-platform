@@ -7,8 +7,8 @@ import type { Database } from "./types";
 
 type CookieToSet = { name: string; value: string; options: CookieOptions };
 
-export const createServerClient = () => {
-  const cookieStore = cookies();
+export const createServerClient = async () => {
+  const cookieStore = await cookies();
 
   return supabaseCreateServerClient<Database>(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,

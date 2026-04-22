@@ -1,8 +1,8 @@
 # Feature: Access Control
 
 **Status:** `Draft`  
-**Version:** 2.3  
-**Last Updated:** 2026-04-21  
+**Version:** 2.5  
+**Last Updated:** 2026-04-22  
 
 ---
 
@@ -14,17 +14,14 @@ Sistem kontrol akses untuk fase 1 memastikan user harus login untuk masuk ke are
 
 ## Current State
 
-Implementasi access control fase 3 dasar sudah mulai berjalan:
+Implementasi access control untuk fase 3 dan fase 4 sudah jalan:
 
 - Middleware tetap memproteksi seluruh `/dashboard/*`
+- Redirect ke `/login` mempertahankan original path beserta query string pada parameter `redirect`
 - Di katalog, ebook Level 2-3 tampil sebagai premium placeholder
 - Klik ebook premium mengarah ke `/dashboard/upgrade`
-- Route baca `/dashboard/read/[ebookId]` sudah melakukan gate server-side:
-  - `admin` boleh masuk
-  - Level 1 boleh masuk
-  - selain itu diarahkan ke `/dashboard/upgrade`
-
-API stream khusus PDF belum dibuat; itu tetap menjadi bagian fase 4.
+- Route baca `/dashboard/read/[ebookId]` melakukan gate server-side via `assertEbookAccess` (admin selalu lolos, Level 1 lolos, selain itu redirect ke `/dashboard/upgrade`)
+- API route `/api/ebook/[id]/stream` sekarang sudah ada dan memakai gate yang sama: 401 bila belum login, 404 bila ebook tidak ada/tidak published, 403 bila `canAccessEbook` menolak, dan 200 dengan signed URL 15 menit bila lolos
 
 ---
 
@@ -100,3 +97,5 @@ Halaman ini berfungsi sebagai placeholder roadmap premium, bukan checkout aktif.
 | 2026-04-20 | 2.1 | Scope fase 1 disederhanakan: Level 1 aktif, Level 2-3 placeholder premium, tanpa membership real |
 | 2026-04-21 | 2.2 | Current State diperbarui: katalog dan route baca placeholder sudah memakai access gate server-side dasar untuk fase 3 |
 | 2026-04-21 | 2.3 | Sinkronisasi metadata dokumen dengan kondisi spec terbaru agar version header dan tanggal tidak tertinggal |
+| 2026-04-21 | 2.4 | Current State diperbarui: API route `/api/ebook/[id]/stream` sudah dibuat dan memakai `canAccessEbook` yang sama dengan route baca, sehingga AC-05 (403 untuk Level 2-3 non-admin) sudah terpenuhi di kode |
+| 2026-04-22 | 2.5 | Current State diperbarui: redirect auth di proteksi `/dashboard/*` kini menyimpan original path + query string ke parameter `redirect` saat diarahkan ke `/login` |
