@@ -47,6 +47,12 @@ export default async function DashboardLayout({
             >
               Premium
             </Link>
+            <Link
+              href="/dashboard/profile"
+              className="text-sm font-medium text-slate-600 transition hover:text-slate-900"
+            >
+              Profile
+            </Link>
             <LogoutButton />
           </div>
         </div>

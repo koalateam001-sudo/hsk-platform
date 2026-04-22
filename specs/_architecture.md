@@ -1,7 +1,7 @@
 # Architecture & Tech Stack
 
 **Status:** Active  
-**Version:** 3.4  
+**Version:** 3.5  
 **Last Updated:** 2026-04-22  
 
 ---
@@ -25,8 +25,7 @@ Status implementasi lanjutan:
 - Fase 3 dasar juga sudah berjalan: `/dashboard/catalog`, komponen katalog, `/dashboard/upgrade`, dan route `/dashboard/read/[ebookId]` dengan access gate server-side
 - Fase 4 PDF viewer sudah selesai: `react-pdf@^9` + `pdfjs-dist@^4` terpasang; komponen `components/pdf/pdf-viewer.tsx` memakai signed URL dari API; API route `app/api/ebook/[id]/stream/route.ts` generate signed URL 15 menit via service role client (`lib/supabase/service.ts`) dan sudah membawa gate 401/403/404 yang sama dengan route baca
 - Upgrade Next.js 16.2.4 + React 19.2.5 + `@supabase/ssr@0.10.2` sudah selesai (`build` lulus, `tsc --noEmit` lulus); breaking changes Next.js 15–16 sudah di-handle (lihat § Pola Kode)
-- Halaman `/` masih placeholder awal; landing page final belum dibuat
-- Halaman `pricing` dan `profile` belum dibuat (Fase 5)
+- Fase 5 selesai: landing page `/` (Server Component dengan redirect ke `/dashboard/catalog` untuk user login), `/pricing`, dan `/dashboard/profile` sudah jalan; navbar+footer publik di `components/marketing/`; util kontak terpusat di `lib/contact.ts` + `components/marketing/contact-cta.tsx` dipakai oleh landing/pricing/upgrade/profile
 - Domain custom belum dibeli (opsional, bisa pakai subdomain Vercel saat deploy)
 
 ---
@@ -101,9 +100,13 @@ Status implementasi lanjutan:
 │   ├── pdf/
 │   ├── ebook/
 │   ├── auth/
+│   ├── marketing/
 │   └── ui/
 ├── lib/
-│   └── supabase/
+│   ├── supabase/
+│   ├── access.ts
+│   ├── auth.ts
+│   └── contact.ts
 ├── proxy.ts
 ├── canvas-stub.js
 ├── specs/
@@ -267,3 +270,4 @@ NEXT_PUBLIC_GA_MEASUREMENT_ID=
 | 2026-04-21 | 3.2 | Dep pinning: `react-pdf` dikunci ke `^9` dan `pdfjs-dist` ke `^4` karena pdfjs v5 `.mjs` ESM gagal di-bundle oleh Next 14 webpack; `next.config.mjs` mendapat `transpilePackages` + alias `canvas=false` sebagai safety net |
 | 2026-04-22 | 3.3 | Upgrade Next.js 14.2.15 → 16.2.4, React 18 → 19.2.5, `@supabase/ssr` 0.5.2 → 0.10.2, eslint 8 → 9; rename `middleware.ts` → `proxy.ts`; migrasi webpack config ke Turbopack (`canvas-stub.js`); async `cookies()`, `params`, `searchParams` di semua server components dan route handlers |
 | 2026-04-22 | 3.4 | Koreksi wording Current State agar konsisten dengan implementasi Next.js 16: proteksi route disebut `proxy.ts` (bukan `middleware.ts`) |
+| 2026-04-22 | 3.5 | Fase 5 selesai: landing `/`, `/pricing`, `/dashboard/profile`; tambah `components/marketing/` (public navbar, footer, contact CTA) dan `lib/contact.ts` sebagai sumber tunggal `NEXT_PUBLIC_CONTACT_URL` |
