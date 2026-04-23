@@ -1,6 +1,6 @@
 # Feature: User Profile
 
-**Status:** `Draft`  
+**Status:** `Implemented`  
 **Version:** 1.3  
 **Last Updated:** 2026-04-23  
 
@@ -16,7 +16,7 @@ Halaman profile sederhana untuk fase 1. Tujuannya bukan mengelola subscription, 
 
 Fase 5 selesai:
 
-- `app/dashboard/profile/page.tsx` adalah Server Component, di-gate oleh `middleware.ts` (matcher `/dashboard/*`) sehingga user belum login otomatis diarahkan ke `/login?redirect=/dashboard/profile`
+- `app/dashboard/profile/page.tsx` adalah Server Component, di-gate oleh `proxy.ts` (matcher `/dashboard/*`) sehingga user belum login otomatis diarahkan ke `/login?redirect=/dashboard/profile`
 - Blok "Informasi Akun" menampilkan `full_name`, `email`, dan `created_at` yang di-format `id-ID` (tanpa baris role mentah — REQ-05/AC-08)
 - Blok "Status Akses" memakai mapping role → label: `admin` → `Admin - semua level terbuka` (tanpa CTA kontak), selain itu `Gratis - Level 1 aktif` dengan subteks `Premium segera hadir` (REQ-04)
 - CTA `Hubungi Kami` memakai komponen `components/marketing/contact-cta.tsx` yang membaca `NEXT_PUBLIC_CONTACT_URL` via `lib/contact.ts`, dan disembunyikan ketika `role = 'admin'` (REQ-06)
@@ -27,32 +27,32 @@ Fase 5 selesai:
 
 ## Requirements
 
-- [ ] REQ-01: Halaman `/dashboard/profile` hanya bisa diakses oleh user yang sudah login
-- [ ] REQ-02: Halaman menampilkan informasi dasar user dari tabel `profiles`
-- [ ] REQ-03: Informasi akun yang tampil (blok "Informasi Akun"):
+- [x] REQ-01: Halaman `/dashboard/profile` hanya bisa diakses oleh user yang sudah login
+- [x] REQ-02: Halaman menampilkan informasi dasar user dari tabel `profiles`
+- [x] REQ-03: Informasi akun yang tampil (blok "Informasi Akun"):
   - nama lengkap
   - email
   - tanggal akun dibuat
-- [ ] REQ-04: Blok terpisah "Status Akses" menampilkan label UI yang diturunkan dari `profiles.role` + scope fase:
+- [x] REQ-04: Blok terpisah "Status Akses" menampilkan label UI yang diturunkan dari `profiles.role` + scope fase:
   - `role = 'free'` → tampilkan `Gratis - Level 1 aktif`, dengan subteks `Premium segera hadir`
   - `role = 'subscriber'` → tampilkan `Gratis - Level 1 aktif` (fase 1 belum mengaktifkan premium; lihat Technical Notes)
   - `role = 'admin'` → tampilkan `Admin - semua level terbuka`
-- [ ] REQ-05: Field `role` mentah (`free` / `subscriber` / `admin`) TIDAK ditampilkan di blok Informasi Akun. Role adalah internal; yang user lihat adalah label UI di REQ-04.
-- [ ] REQ-06: Ada CTA `Hubungi Kami` untuk user yang tertarik akses premium (disembunyikan untuk `role = 'admin'`)
-- [ ] REQ-07: Ada tombol atau link kembali ke katalog
+- [x] REQ-05: Field `role` mentah (`free` / `subscriber` / `admin`) TIDAK ditampilkan di blok Informasi Akun. Role adalah internal; yang user lihat adalah label UI di REQ-04.
+- [x] REQ-06: Ada CTA `Hubungi Kami` untuk user yang tertarik akses premium (disembunyikan untuk `role = 'admin'`)
+- [x] REQ-07: Ada tombol atau link kembali ke katalog
 
 ---
 
 ## Acceptance Criteria
 
-- [ ] AC-01: User yang belum login di-redirect ke `/login`
-- [ ] AC-02: User login bisa membuka `/dashboard/profile` tanpa error
-- [ ] AC-03: Data profile di-load server-side dari Supabase
-- [ ] AC-04: Jika data profile gagal dimuat, tampilkan error state yang user-friendly
-- [ ] AC-05: CTA `Hubungi Kami` menggunakan kanal kontak yang sama dengan landing page / pricing / upgrade page
-- [ ] AC-06: Label status akses untuk user `role = 'free'` adalah `Gratis - Level 1 aktif` dengan subteks `Premium segera hadir`
-- [ ] AC-07: Label status akses untuk user `role = 'admin'` adalah `Admin - semua level terbuka` dan CTA `Hubungi Kami` tidak ditampilkan
-- [ ] AC-08: Blok Informasi Akun tidak memuat baris `Role` mentah
+- [x] AC-01: User yang belum login di-redirect ke `/login`
+- [x] AC-02: User login bisa membuka `/dashboard/profile` tanpa error
+- [x] AC-03: Data profile di-load server-side dari Supabase
+- [x] AC-04: Jika data profile gagal dimuat, tampilkan error state yang user-friendly
+- [x] AC-05: CTA `Hubungi Kami` menggunakan kanal kontak yang sama dengan landing page / pricing / upgrade page
+- [x] AC-06: Label status akses untuk user `role = 'free'` adalah `Gratis - Level 1 aktif` dengan subteks `Premium segera hadir`
+- [x] AC-07: Label status akses untuk user `role = 'admin'` adalah `Admin - semua level terbuka` dan CTA `Hubungi Kami` tidak ditampilkan
+- [x] AC-08: Blok Informasi Akun tidak memuat baris `Role` mentah
 
 ---
 
@@ -104,4 +104,4 @@ Fase 5 selesai:
 | 2026-04-20 | 1.0 | Tambah spec profile page fase 1 agar route `/dashboard/profile` punya anchor SDD yang jelas |
 | 2026-04-21 | 1.1 | Pisahkan blok Informasi Akun dan Status Akses; tegaskan mapping role -> label UI agar tidak redundan menampilkan role mentah |
 | 2026-04-22 | 1.2 | Current State diperbarui: halaman `/dashboard/profile` sudah terimplementasi dengan blok Informasi Akun, Status Akses berbasis role, dan CTA `Hubungi Kami` dari util kontak terpusat |
-| 2026-04-23 | 1.3 | Koreksi wording: gate `/dashboard/*` berasal dari `middleware.ts` (bukan `proxy.ts`) sesuai perbaikan route protection di `specs/_architecture.md` v3.7 |
+| 2026-04-23 | 1.3 | Tandai profile sebagai implemented dan centang REQ/AC yang sudah terpenuhi di kode |

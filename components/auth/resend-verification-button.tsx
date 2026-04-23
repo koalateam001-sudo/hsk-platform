@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import { getAuthCallbackUrl } from "@/lib/auth";
 import { createBrowserClient } from "@/lib/supabase/client";
 
 type ResendVerificationButtonProps = {
@@ -39,7 +40,7 @@ export function ResendVerificationButton({
       type: "signup",
       email,
       options: {
-        emailRedirectTo: `${window.location.origin}/auth/callback?next=/dashboard/catalog`,
+        emailRedirectTo: getAuthCallbackUrl("/dashboard/catalog"),
       },
     });
 

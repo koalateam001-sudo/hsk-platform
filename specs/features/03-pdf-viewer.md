@@ -1,8 +1,8 @@
 # Feature: PDF Viewer
 
-**Status:** `Draft`  
-**Version:** 2.5  
-**Last Updated:** 2026-04-21  
+**Status:** `Implemented`  
+**Version:** 2.6  
+**Last Updated:** 2026-04-23  
 
 ---
 
@@ -30,26 +30,26 @@ Fase 4 PDF viewer sudah terpasang:
 
 ## Requirements
 
-- [ ] REQ-01: PDF ditampilkan in-browser menggunakan `react-pdf`
-- [ ] REQ-02: Tidak ada tombol download atau print yang diekspos di UI
-- [ ] REQ-03: PDF diambil dari Supabase private bucket via signed URL
-- [ ] REQ-04: Signed URL di-generate server-side dan expire dalam 15 menit
-- [ ] REQ-05: Akses signed URL di-gate oleh auth + level check
-- [ ] REQ-06: User bisa navigasi halaman
-- [ ] REQ-07: User bisa zoom in dan zoom out
-- [ ] REQ-08: Viewer responsive di mobile dan desktop
+- [x] REQ-01: PDF ditampilkan in-browser menggunakan `react-pdf`
+- [x] REQ-02: Tidak ada tombol download atau print yang diekspos di UI
+- [x] REQ-03: PDF diambil dari Supabase private bucket via signed URL
+- [x] REQ-04: Signed URL di-generate server-side dan expire dalam 15 menit
+- [x] REQ-05: Akses signed URL di-gate oleh auth + level check
+- [x] REQ-06: User bisa navigasi halaman
+- [x] REQ-07: User bisa zoom in dan zoom out
+- [x] REQ-08: Viewer responsive di mobile dan desktop
 
 ---
 
 ## Acceptance Criteria
 
-- [ ] AC-01: Tidak ada tombol download di UI viewer
-- [ ] AC-02: Signed URL boleh tampak di Network tab
-- [ ] AC-03: Navigasi halaman berfungsi
-- [ ] AC-04: Zoom range 50% sampai 200%
-- [ ] AC-05: Error loading PDF ditampilkan jelas
-- [ ] AC-06: Ada loading state
-- [ ] AC-07: Di mobile viewer tetap usable
+- [x] AC-01: Tidak ada tombol download di UI viewer
+- [x] AC-02: Signed URL boleh tampak di Network tab
+- [x] AC-03: Navigasi halaman berfungsi
+- [x] AC-04: Zoom range 50% sampai 200%
+- [x] AC-05: Error loading PDF ditampilkan jelas
+- [x] AC-06: Ada loading state
+- [x] AC-07: Di mobile viewer tetap usable
 
 ---
 
@@ -120,3 +120,4 @@ User klik ebook di katalog
 | 2026-04-21 | 2.3 | Update Current State: fase 4 selesai — `PdfViewer` client component, API route `/api/ebook/[id]/stream` dengan signed URL 15 menit via service role, dan halaman `/dashboard/read/[ebookId]` sekarang sudah tidak placeholder |
 | 2026-04-21 | 2.4 | Technical Notes: dokumentasikan kewajiban `transpilePackages` + alias `canvas` di `next.config.mjs` agar `pdf.mjs` load tanpa error `Object.defineProperty called on non-object` |
 | 2026-04-21 | 2.5 | Downgrade ke `react-pdf@^9` + `pdfjs-dist@^4` karena `pdfjs-dist` v5 `.mjs` ESM tidak kompatibel dengan webpack Next 14 meskipun `transpilePackages` sudah diaktifkan; API komponen identik sehingga `PdfViewer` tidak berubah |
+| 2026-04-23 | 2.6 | Tandai PDF viewer sebagai implemented dan centang REQ/AC yang sudah terpenuhi di kode |

@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { AuthAlert } from "@/components/auth/auth-alert";
+import { getAuthCallbackUrl } from "@/lib/auth";
 import { createBrowserClient } from "@/lib/supabase/client";
 
 export function RegisterForm() {
@@ -52,7 +53,7 @@ export function RegisterForm() {
         data: {
           full_name: trimmedName,
         },
-        emailRedirectTo: `${window.location.origin}/auth/callback?next=/dashboard/catalog`,
+        emailRedirectTo: getAuthCallbackUrl("/dashboard/catalog"),
       },
     });
 

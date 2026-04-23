@@ -24,7 +24,7 @@ export const createServerClient = async () => {
               cookieStore.set(name, value, options),
             );
           } catch {
-            // Dipanggil dari Server Component — refresh cookie sudah ditangani middleware.
+            // Dipanggil dari Server Component — refresh cookie sudah ditangani proxy.
           }
         },
       },

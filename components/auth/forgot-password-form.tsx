@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { AuthAlert } from "@/components/auth/auth-alert";
+import { getAuthCallbackUrl } from "@/lib/auth";
 import { createBrowserClient } from "@/lib/supabase/client";
 
 export function ForgotPasswordForm() {
@@ -28,7 +29,7 @@ export function ForgotPasswordForm() {
     const { error: resetError } = await supabase.auth.resetPasswordForEmail(
       trimmedEmail,
       {
-        redirectTo: `${window.location.origin}/auth/callback?next=/reset-password`,
+        redirectTo: getAuthCallbackUrl("/reset-password"),
       },
     );
 

@@ -1,8 +1,8 @@
 # Feature: Authentication
 
-**Status:** `Draft`  
-**Version:** 1.7  
-**Last Updated:** 2026-04-21  
+**Status:** `Implemented`  
+**Version:** 1.8  
+**Last Updated:** 2026-04-23  
 
 ---
 
@@ -22,45 +22,46 @@ Implementasi fase 2 auth sudah ada dan berjalan pada baseline project saat ini:
 - Register sudah mengirim `full_name` via `options.data` saat `signUp`
 - Login mendeteksi kasus email belum diverifikasi dan menyediakan tombol `Kirim ulang email verifikasi`
 - Reset password berjalan end-to-end: request email -> callback -> halaman update password -> redirect kembali ke login
-- Middleware `/dashboard/*` tetap dipakai untuk proteksi area dashboard
+- Proxy `/dashboard/*` tetap dipakai untuk proteksi area dashboard
+- Callback URL untuk signup, resend verification, dan reset password memakai `getAuthCallbackUrl()` sehingga base URL mengikuti `NEXT_PUBLIC_APP_URL`
 - Tersedia scaffold minimum `/dashboard/catalog` agar hasil login sukses tidak berakhir ke 404 sebelum fase 3 dimulai
 
 ---
 
 ## Requirements
 
-- [ ] REQ-01: User bisa register dengan email, password, dan nama lengkap
-- [ ] REQ-02: Supabase mengirim email verifikasi setelah register
-- [ ] REQ-03: User yang belum verifikasi email tidak bisa login
-- [ ] REQ-04: User bisa login dengan email dan password
-- [ ] REQ-05: User bisa logout dari semua halaman
-- [ ] REQ-06: User bisa request reset password via email
-- [ ] REQ-06a: User yang membuka link reset password dari email diarahkan ke flow update password yang valid di aplikasi
-- [ ] REQ-07: Saat register berhasil, buat row di tabel `profiles` secara otomatis via DB trigger
-- [ ] REQ-08: Setelah login, redirect dengan urutan precedence:
+- [x] REQ-01: User bisa register dengan email, password, dan nama lengkap
+- [x] REQ-02: Supabase mengirim email verifikasi setelah register
+- [x] REQ-03: User yang belum verifikasi email tidak bisa login
+- [x] REQ-04: User bisa login dengan email dan password
+- [x] REQ-05: User bisa logout dari semua halaman
+- [x] REQ-06: User bisa request reset password via email
+- [x] REQ-06a: User yang membuka link reset password dari email diarahkan ke flow update password yang valid di aplikasi
+- [x] REQ-07: Saat register berhasil, buat row di tabel `profiles` secara otomatis via DB trigger
+- [x] REQ-08: Setelah login, redirect dengan urutan precedence:
   1. Jika URL login mengandung `?redirect=<path>` -> redirect ke path internal tersebut
   2. Jika tidak ada -> fallback ke `/dashboard/catalog`
-- [ ] REQ-09: Halaman login dan register tidak bisa diakses oleh user yang sudah login
-- [ ] REQ-10: Dari halaman `/register/success` dan layar "email belum diverifikasi", user bisa menekan tombol `Kirim ulang email verifikasi`
+- [x] REQ-09: Halaman login dan register tidak bisa diakses oleh user yang sudah login
+- [x] REQ-10: Dari halaman `/register/success` dan layar "email belum diverifikasi", user bisa menekan tombol `Kirim ulang email verifikasi`
 
 ---
 
 ## Acceptance Criteria
 
-- [ ] AC-01: Form register berisi Full Name, Email, Password, Confirm Password
-- [ ] AC-02: Validasi email valid, password minimal 8 karakter, dan konfirmasi password cocok
-- [ ] AC-03: Tampilkan error message yang jelas jika validasi gagal
-- [ ] AC-04: Tampilkan pesan sukses setelah register
-- [ ] AC-05: Form login berisi Email dan Password
-- [ ] AC-06: Tampilkan error generik jika login gagal
-- [ ] AC-07: Ada link `Lupa Password?` di halaman login
-- [ ] AC-08: Tombol logout tersedia di dashboard
-- [ ] AC-09: Setelah logout, redirect ke `/login`
-- [ ] AC-10: Login sukses dengan query `redirect` mengarah ke path tujuan yang valid
-- [ ] AC-11: Login sukses tanpa query `redirect` mengarah ke `/dashboard/catalog`
-- [ ] AC-12: Query `redirect` eksternal diabaikan
-- [ ] AC-13: Tombol resend verifikasi disabled 60 detik setelah dipencet
-- [ ] AC-14: User bisa menyelesaikan reset password end-to-end tanpa harus membuka Supabase dashboard manual
+- [x] AC-01: Form register berisi Full Name, Email, Password, Confirm Password
+- [x] AC-02: Validasi email valid, password minimal 8 karakter, dan konfirmasi password cocok
+- [x] AC-03: Tampilkan error message yang jelas jika validasi gagal
+- [x] AC-04: Tampilkan pesan sukses setelah register
+- [x] AC-05: Form login berisi Email dan Password
+- [x] AC-06: Tampilkan error generik jika login gagal
+- [x] AC-07: Ada link `Lupa Password?` di halaman login
+- [x] AC-08: Tombol logout tersedia di dashboard
+- [x] AC-09: Setelah logout, redirect ke `/login`
+- [x] AC-10: Login sukses dengan query `redirect` mengarah ke path tujuan yang valid
+- [x] AC-11: Login sukses tanpa query `redirect` mengarah ke `/dashboard/catalog`
+- [x] AC-12: Query `redirect` eksternal diabaikan
+- [x] AC-13: Tombol resend verifikasi disabled 60 detik setelah dipencet
+- [x] AC-14: User bisa menyelesaikan reset password end-to-end tanpa harus membuka Supabase dashboard manual
 
 ---
 
@@ -122,12 +123,12 @@ Implementasi fase 2 auth sudah ada dan berjalan pada baseline project saat ini:
   Trigger DB menolak `full_name` kosong (lihat `specs/_data-models.md`), jadi form register harus memvalidasi non-empty sebelum submit
 - Resend verifikasi: `supabase.auth.resend({ type: 'signup', email })`
 - Tambahkan route callback auth untuk menangani return URL dari email verification / reset password
-- Gunakan `NEXT_PUBLIC_APP_URL` sebagai base URL aplikasi saat menyusun callback / redirect auth
+- Gunakan `NEXT_PUBLIC_APP_URL` sebagai base URL aplikasi saat menyusun callback / redirect auth melalui `getAuthCallbackUrl()`
 - Untuk trigger pembuatan profil, lihat SQL di `specs/_data-models.md`
 - Gunakan `createServerClient` di Server Components
-- Middleware proteksi `/dashboard/*`
+- Proxy proteksi `/dashboard/*`
 - Saat handling redirect di login page, whitelist hanya path internal
-- Gunakan `supabase.auth.getUser()` di middleware
+- Gunakan `supabase.auth.getUser()` di proxy
 - Form validation bisa menggunakan react-hook-form + zod
 - Placeholder tipis `/dashboard/catalog` boleh dipakai sementara pada fase 2 hanya untuk tujuan redirect setelah login; implementasi katalog sebenarnya tetap mengikuti `specs/features/02-catalog.md` di fase 3
 
@@ -182,3 +183,4 @@ Checklist ini juga diacu di `GETTING_STARTED.md`.
 | 2026-04-21 | 1.5 | Current State diperbarui: fase 2 auth sudah diimplementasikan end-to-end pada baseline project |
 | 2026-04-21 | 1.6 | Klarifikasi bahwa custom SMTP tidak mengubah auth routes, tetapi menambah kebutuhan verifikasi delivery dan setup dashboard |
 | 2026-04-21 | 1.7 | Tambah keputusan operasional auth saat custom SMTP aktif: failure handling, support fallback, dan resend soft limit |
+| 2026-04-23 | 1.8 | Tandai auth sebagai implemented, centang REQ/AC yang sudah terpenuhi, dan sinkronkan callback auth agar memakai `getAuthCallbackUrl()` berbasis `NEXT_PUBLIC_APP_URL` |

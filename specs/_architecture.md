@@ -1,7 +1,7 @@
 # Architecture & Tech Stack
 
 **Status:** Active  
-**Version:** 3.7  
+**Version:** 3.8  
 **Last Updated:** 2026-04-23  
 
 ---
@@ -10,9 +10,9 @@
 
 Foundation Fase 1 (GETTING_STARTED.md § FASE 1) sudah selesai dan terverifikasi:
 
-- Project Next.js 14 + TypeScript + Tailwind CSS sudah di-init manual (bukan via `create-next-app`) dengan struktur folder sesuai spec
+- Project Next.js + TypeScript + Tailwind CSS sudah di-init manual (bukan via `create-next-app`) dengan struktur folder sesuai spec (init di Next.js 14, sekarang 16.2.4 — lihat changelog 3.3)
 - `lib/supabase/client.ts`, `lib/supabase/server.ts` sudah ada; `lib/supabase/types.ts` sudah di-generate dari Supabase via `supabase` CLI (devDep) dan bukan placeholder lagi
-- `middleware.ts` memproteksi `/dashboard/*` pakai `getUser()` dan refresh cookie session di route lain (Next.js 16 tetap memakai nama `middleware.ts` + export `middleware`; nama `proxy.ts` yang sempat dicoba tidak pernah dieksekusi oleh runtime)
+- `proxy.ts` memproteksi `/dashboard/*` pakai `getUser()` dan refresh cookie session di route lain
 - `.env.example` dan `.gitignore` sudah ada; `.env.local` terisi lengkap termasuk `NEXT_PUBLIC_CONTACT_URL` (WhatsApp)
 - `supabase/migrations/001_initial_schema.sql` sudah dijalankan di Supabase dashboard — tabel `profiles`, `ebooks`, trigger `handle_new_user`, dan RLS minimum aktif
 - Storage bucket `ebook-pdfs` (private) dan `ebook-covers` (public) sudah dibuat di Supabase dashboard
@@ -24,7 +24,11 @@ Status implementasi lanjutan:
 - Fase 2 auth sudah dibuat lengkap: `(auth)/login`, `(auth)/register`, `(auth)/register/success`, `(auth)/forgot-password`, `(auth)/reset-password`, dan `auth/callback`
 - Fase 3 dasar juga sudah berjalan: `/dashboard/catalog`, komponen katalog, `/dashboard/upgrade`, dan route `/dashboard/read/[ebookId]` dengan access gate server-side
 - Fase 4 PDF viewer sudah selesai: `react-pdf@^9` + `pdfjs-dist@^4` terpasang; komponen `components/pdf/pdf-viewer.tsx` memakai signed URL dari API; API route `app/api/ebook/[id]/stream/route.ts` generate signed URL 15 menit via service role client (`lib/supabase/service.ts`) dan sudah membawa gate 401/403/404 yang sama dengan route baca
-- Upgrade Next.js 16.2.4 + React 19.2.5 + `@supabase/ssr@0.10.2` sudah selesai (`build` lulus, `tsc --noEmit` lulus); breaking changes Next.js 15–16 sudah di-handle (lihat § Pola Kode)
+- Upgrade Next.js 16.2.4 + React 19.2.5 + `@supabase/ssr@0.10.2` sudah selesai; breaking changes Next.js 15–16 sudah di-handle (lihat § Pola Kode)
+- Proteksi route sudah dimigrasikan dari convention lama `middleware.ts` ke `proxy.ts` sesuai Next.js 16; fungsi export wajib bernama `proxy`
+- Linting sudah memakai ESLint CLI (`npm run lint` -> `eslint .`) dengan flat config `eslint.config.mjs`; `next lint` tidak dipakai lagi karena tidak valid di Next.js 16
+- Callback auth client sekarang memakai `getAuthCallbackUrl()` dari `lib/auth.ts`, sehingga base URL mengikuti `NEXT_PUBLIC_APP_URL`
+- Verifikasi terakhir 2026-04-23: `npx.cmd tsc --noEmit`, `npm.cmd run lint`, dan `npm.cmd run build` lulus
 - Fase 5 selesai: landing page `/` (Server Component dengan redirect ke `/dashboard/catalog` untuk user login), `/pricing`, dan `/dashboard/profile` sudah jalan; navbar+footer publik di `components/marketing/`; util kontak terpusat di `lib/contact.ts` + `components/marketing/contact-cta.tsx` dipakai oleh landing/pricing/upgrade/profile
 - Fase 6 selesai:
   - SEO metadata dasar dipusatkan di `app/layout.tsx` (title template, `metadataBase` dari `NEXT_PUBLIC_APP_URL`, OG/Twitter default, robots allow); halaman publik (`/`, `/pricing`) punya metadata per-route dengan `alternates.canonical`; halaman auth + dashboard di-`noindex`
@@ -114,7 +118,7 @@ Status implementasi lanjutan:
 │   ├── access.ts
 │   ├── auth.ts
 │   └── contact.ts
-├── middleware.ts
+├── proxy.ts
 ├── canvas-stub.js
 ├── specs/
 └── CLAUDE.md
@@ -178,10 +182,10 @@ export default async function Page({ searchParams }: Props) {
 
 ### Route Protection
 
-- `middleware.ts` hanya cek auth untuk `/dashboard/*`
-- Export function wajib bernama `middleware` (Next.js hanya mengeksekusi file yang bernama `middleware.ts`/`.js`; nama lain seperti `proxy.ts` diabaikan runtime)
+- `proxy.ts` hanya cek auth untuk `/dashboard/*`
+- Export function wajib bernama `proxy` (convention Next.js 16)
 - Gunakan `getUser()`, bukan `getSession()`
-- Pengecekan akses premium placeholder dilakukan di Server Component atau API Route, bukan di middleware
+- Pengecekan akses premium placeholder dilakukan di Server Component atau API Route, bukan di proxy
 - Flow verifikasi email dan reset password boleh melewati route callback auth khusus sebelum diarahkan ke halaman final
 
 ### TypeScript
@@ -279,4 +283,5 @@ NEXT_PUBLIC_GA_MEASUREMENT_ID=
 | 2026-04-22 | 3.4 | Koreksi wording Current State agar konsisten dengan implementasi Next.js 16: proteksi route disebut `proxy.ts` (bukan `middleware.ts`) |
 | 2026-04-22 | 3.5 | Fase 5 selesai: landing `/`, `/pricing`, `/dashboard/profile`; tambah `components/marketing/` (public navbar, footer, contact CTA) dan `lib/contact.ts` sebagai sumber tunggal `NEXT_PUBLIC_CONTACT_URL` |
 | 2026-04-23 | 3.6 | Fase 6 polish: SEO metadata (title template + metadataBase + OG/Twitter), `app/robots.ts` + `app/sitemap.ts`, noindex untuk auth/dashboard, Google Analytics conditional via `components/analytics/google-analytics.tsx`, dashboard header responsive (flex-wrap), build Turbopack lulus tanpa warning |
-| 2026-04-23 | 3.7 | Koreksi: route protection kembali ke `middleware.ts` + export `middleware`. Rename ke `proxy.ts` di v3.3/3.4 ternyata menyebabkan middleware tidak dieksekusi Next.js karena runtime hanya mengenali file bernama `middleware.ts`. Sinkronisasi Current State, Struktur Folder, § Route Protection, dan `specs/features/08-profile.md` |
+| 2026-04-23 | 3.7 | Koreksi narasi § Current State line foundation agar tidak mengunci "Next.js 14"; runtime aktual sudah 16.2.4 sejak changelog 3.3 |
+| 2026-04-23 | 3.8 | Migrasi route protection ke `proxy.ts` sesuai Next.js 16, ganti lint script ke ESLint CLI flat config, tegaskan callback auth memakai `getAuthCallbackUrl()` berbasis `NEXT_PUBLIC_APP_URL`, dan catat verifikasi build/lint/typecheck + runtime test `/dashboard/*` redirect terbaru. Catatan: percobaan rollback ke `middleware.ts` di commit `d6d5c4c` dibatalkan setelah verifikasi runtime membuktikan `proxy.ts` dieksekusi Next.js 16.2.4 dengan benar |

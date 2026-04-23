@@ -1,8 +1,8 @@
 # Feature: Landing Page & Pricing
 
-**Status:** `Draft`  
-**Version:** 1.3  
-**Last Updated:** 2026-04-22  
+**Status:** `Implemented`  
+**Version:** 1.4  
+**Last Updated:** 2026-04-23  
 
 ---
 
@@ -26,23 +26,23 @@ Fase 5 selesai:
 
 ## Requirements
 
-- [ ] REQ-01: Landing page di `/` bisa diakses publik
-- [ ] REQ-02: Halaman pricing di `/pricing` bisa diakses publik
-- [ ] REQ-03: Ada CTA utama "Mulai Gratis" yang mengarah ke `/register`
-- [ ] REQ-04: Ada CTA sekunder "Lihat Paket" yang mengarah ke `/pricing`
-- [ ] REQ-05: User yang sudah login dan buka `/` otomatis redirect ke `/dashboard/catalog`
-- [ ] REQ-06: Ada informasi kontak di footer
-- [ ] REQ-07: Halaman responsive di mobile
-- [ ] REQ-08: CTA premium pada fase 1 tidak melakukan checkout, tetapi mengarah ke CTA final `Hubungi Kami`
+- [x] REQ-01: Landing page di `/` bisa diakses publik
+- [x] REQ-02: Halaman pricing di `/pricing` bisa diakses publik
+- [x] REQ-03: Ada CTA utama "Mulai Gratis" yang mengarah ke `/register`
+- [x] REQ-04: Ada CTA sekunder "Lihat Paket" yang mengarah ke `/pricing`
+- [x] REQ-05: User yang sudah login dan buka `/` otomatis redirect ke `/dashboard/catalog`
+- [x] REQ-06: Ada informasi kontak di footer
+- [x] REQ-07: Halaman responsive di mobile
+- [x] REQ-08: CTA premium pada fase 1 tidak melakukan checkout, tetapi mengarah ke CTA final `Hubungi Kami`
 
 ---
 
 ## Acceptance Criteria
 
-- [ ] AC-01: Landing page load cepat dan semua CTA functional
-- [ ] AC-02: Halaman tidak pakai library berat
-- [ ] AC-03: Pricing page menampilkan jelas bahwa premium adalah roadmap berikutnya
-- [ ] AC-04: Klik CTA premium tidak error dan tidak memerlukan integrasi payment
+- [x] AC-01: Landing page load cepat dan semua CTA functional
+- [x] AC-02: Halaman tidak pakai library berat
+- [x] AC-03: Pricing page menampilkan jelas bahwa premium adalah roadmap berikutnya
+- [x] AC-04: Klik CTA premium tidak error dan tidak memerlukan integrasi payment
 
 ---
 
@@ -78,7 +78,7 @@ Pricing page tetap menampilkan:
 ## Technical Notes
 
 - Landing page dan pricing page adalah Server Component
-- REQ-05 (redirect user login dari `/` ke `/dashboard/catalog`) dilakukan di Server Component `app/page.tsx`, **bukan** di middleware. Middleware hanya meng-gate `/dashboard/*` sesuai `specs/_architecture.md`. Gunakan `createServerClient` + `supabase.auth.getUser()` di halaman root, lalu `redirect('/dashboard/catalog')` jika user login
+- REQ-05 (redirect user login dari `/` ke `/dashboard/catalog`) dilakukan di Server Component `app/page.tsx`, **bukan** di proxy. Proxy hanya meng-gate `/dashboard/*` sesuai `specs/_architecture.md`. Gunakan `createServerClient` + `supabase.auth.getUser()` di halaman root, lalu `redirect('/dashboard/catalog')` jika user login
 - Tidak perlu route checkout di fase 1
 - Copy pricing harus jujur bahwa premium belum aktif
 - Jika fase payment dimulai nanti, file spec ini diperbarui lagi agar CTA premium terhubung ke checkout
@@ -109,3 +109,4 @@ Pricing page tetap menampilkan:
 | 2026-04-20 | 1.1 | Pricing/upgrade diubah jadi placeholder roadmap premium; checkout ditunda |
 | 2026-04-21 | 1.2 | Tegaskan bahwa redirect REQ-05 dilakukan di Server Component `app/page.tsx`, bukan middleware |
 | 2026-04-22 | 1.3 | Current State diperbarui: landing page `/`, pricing page `/pricing`, navbar+footer publik, dan util kontak terpusat sudah jalan di Fase 5 |
+| 2026-04-23 | 1.4 | Tandai landing/pricing sebagai implemented, centang REQ/AC, dan sinkronkan istilah route protection ke proxy |
