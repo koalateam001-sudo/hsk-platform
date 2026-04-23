@@ -1,7 +1,21 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { ContactCta } from "@/components/marketing/contact-cta";
 import { PublicFooter } from "@/components/marketing/public-footer";
 import { PublicNavbar } from "@/components/marketing/public-navbar";
+
+export const metadata: Metadata = {
+  title: "Paket & Harga",
+  description:
+    "Paket Gratis Level 1 tersedia sekarang. Paket Premium Level 2 & 3 segera hadir.",
+  alternates: { canonical: "/pricing" },
+  openGraph: {
+    title: "Paket & Harga — HSK 3.0 Platform",
+    description:
+      "Paket Gratis Level 1 tersedia sekarang. Paket Premium Level 2 & 3 segera hadir.",
+    url: "/pricing",
+  },
+};
 
 export default function PricingPage() {
   return (

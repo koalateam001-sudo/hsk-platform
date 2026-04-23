@@ -1,8 +1,15 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { AuthShell } from "@/components/auth/auth-shell";
 import { RegisterForm } from "@/components/auth/register-form";
 import { createServerClient } from "@/lib/supabase/server";
+
+export const metadata: Metadata = {
+  title: "Daftar",
+  description: "Buat akun HSK 3.0 Platform dan mulai membaca Level 1 gratis.",
+  robots: { index: false, follow: false },
+};
 
 export default async function RegisterPage() {
   const supabase = await createServerClient();

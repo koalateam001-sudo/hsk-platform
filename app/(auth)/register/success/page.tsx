@@ -1,8 +1,15 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { AuthShell } from "@/components/auth/auth-shell";
 import { ResendVerificationButton } from "@/components/auth/resend-verification-button";
 import { createServerClient } from "@/lib/supabase/server";
+
+export const metadata: Metadata = {
+  title: "Verifikasi Email",
+  description: "Cek email Anda untuk menyelesaikan verifikasi akun.",
+  robots: { index: false, follow: false },
+};
 
 type RegisterSuccessPageProps = {
   searchParams?: Promise<{
