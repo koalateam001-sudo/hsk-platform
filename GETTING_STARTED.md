@@ -14,7 +14,7 @@ Beberapa langkah ini harus dikerjakan manual.
 
 - [x] Daftar di https://supabase.com
 - [x] Buat project baru
-- [ ] Catat dari Project Settings -> API:
+- [x] Catat dari Project Settings -> API:
   - `Project URL` -> `NEXT_PUBLIC_SUPABASE_URL`
   - `anon public` key -> `NEXT_PUBLIC_SUPABASE_ANON_KEY`
   - `service_role` key -> `SUPABASE_SERVICE_ROLE_KEY`
@@ -28,7 +28,7 @@ Beberapa langkah ini harus dikerjakan manual.
     - isi sender name / sender email / host / port / username / password
     - verifikasi SPF / DKIM / DMARC domain pengirim
   - Policies -> minimum password length: 8
-- [ ] Buat storage bucket:
+- [x] Buat storage bucket:
   - `ebook-covers` -> public
   - `ebook-pdfs` -> private
 
@@ -36,26 +36,26 @@ Referensi: `specs/features/01-auth.md`
 
 ### 1.2 Akun GitHub
 
-- [ ] Buat repo baru
-- [ ] Copy seluruh isi folder proyek ke repo tersebut
+- [x] Buat repo baru
+- [x] Copy seluruh isi folder proyek ke repo tersebut
 
 ### 1.3 Akun Vercel
 
-- [ ] Daftar di https://vercel.com
-- [ ] Connect repo GitHub
+- [x] Daftar di https://vercel.com
+- [x] Connect repo GitHub
 
 ### 1.3a Keputusan SMTP Sebelum Produksi
 
-- [ ] Pilih satu provider custom SMTP final untuk produksi
+- [ ] **[SISA]** Pilih satu provider custom SMTP final untuk produksi
   - kandidat awal: Brevo / Resend / AWS SES
-- [ ] Validasi kredensial provider SMTP
-- [ ] Pastikan sender/domain yang dipakai memang dimiliki dan dikelola oleh owner proyek
+- [ ] **[SISA]** Validasi kredensial provider SMTP
+- [ ] **[SISA]** Pastikan sender/domain yang dipakai memang dimiliki dan dikelola oleh owner proyek
 
 ### 1.4 Install Tools di Laptop
 
-- [ ] Node.js 20+
-- [ ] Git
-- [ ] VS Code atau editor sejenis
+- [x] Node.js 20+
+- [x] Git
+- [x] VS Code atau editor sejenis
 
 ### 1.5 Domain (Optional)
 
@@ -302,31 +302,31 @@ Saat ada perubahan:
 
 ## Bagian 5: Checklist Sebelum Launch Publik Fase 1
 
-- [ ] `npm run lint` lulus
-- [ ] `npm run build` lulus
-- [ ] `npx tsc --noEmit` lulus setelah build
-- [ ] Jika custom SMTP dipakai, provider final sudah dipilih eksplisit
-- [ ] Semua env variable Supabase sudah ter-set di Vercel
-- [ ] `NEXT_PUBLIC_APP_URL` sudah ter-set sesuai domain aktif
+- [x] `npm run lint` lulus
+- [x] `npm run build` lulus
+- [x] `npx tsc --noEmit` lulus setelah build
+- [ ] **[SISA]** Jika custom SMTP dipakai, provider final sudah dipilih eksplisit
+- [x] Semua env variable Supabase sudah ter-set di Vercel
+- [x] `NEXT_PUBLIC_APP_URL` sudah ter-set sesuai domain aktif
   - Contoh: `https://nama-domain.com`
   - Trailing slash aman karena app menormalisasi via `getAppUrl()`, tetapi value tanpa trailing slash tetap direkomendasikan
-- [ ] `NEXT_PUBLIC_CONTACT_URL` sudah ter-set dan mengarah ke kanal kontak final
-- [ ] `NEXT_PUBLIC_GA_MEASUREMENT_ID` sudah ter-set jika Google Analytics dipakai
-- [ ] Supabase auth email template sudah benar
-- [ ] Jika custom SMTP dipakai, sender identity dan kredensial SMTP sudah tervalidasi
-- [ ] Jika custom SMTP dipakai, SPF/DKIM/DMARC domain pengirim sudah benar
-- [ ] Supabase Site URL dan Redirect URLs sudah diganti dari localhost ke domain publik
-- [ ] Signup berhasil dengan flow email aktif
-- [ ] Email verifikasi benar-benar terkirim
-- [ ] Link confirm email benar-benar mengarah dan berfungsi
-- [ ] Forgot password berhasil
-- [ ] Reset password berhasil
-- [ ] Minimal ada ebook Level 1 yang benar-benar bisa dibaca
-- [ ] Level 2-3 tampil sebagai premium placeholder dengan copy yang jujur
-- [ ] Domain sudah terhubung jika diperlukan
-- [ ] HTTPS aktif
-- [ ] Google Analytics aktif jika dipakai
-- [ ] `/robots.txt` dan `/sitemap.xml` bisa diakses di domain publik
+- [x] `NEXT_PUBLIC_CONTACT_URL` sudah ter-set dan mengarah ke kanal kontak final
+- [x] `NEXT_PUBLIC_GA_MEASUREMENT_ID` sudah ter-set jika Google Analytics dipakai
+- [x] Supabase auth email template sudah benar
+- [ ] **[SISA]** Jika custom SMTP dipakai, sender identity dan kredensial SMTP sudah tervalidasi
+- [ ] **[SISA]** Jika custom SMTP dipakai, SPF/DKIM/DMARC domain pengirim sudah benar
+- [x] Supabase Site URL dan Redirect URLs sudah diganti dari localhost ke domain publik
+- [x] Signup berhasil dengan flow email aktif
+- [x] Email verifikasi benar-benar terkirim
+- [x] Link confirm email benar-benar mengarah dan berfungsi
+- [x] Forgot password berhasil
+- [x] Reset password berhasil
+- [x] Minimal ada ebook Level 1 yang benar-benar bisa dibaca
+- [x] Level 2-3 tampil sebagai premium placeholder dengan copy yang jujur
+- [x] Domain sudah terhubung jika diperlukan
+- [x] HTTPS aktif
+- [x] Google Analytics aktif jika dipakai
+- [x] `/robots.txt` dan `/sitemap.xml` bisa diakses di domain publik
 - [ ] Halaman privacy policy dan terms of service dibuat jika diperlukan untuk publik
 
 ---
