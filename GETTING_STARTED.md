@@ -1,8 +1,8 @@
 # Getting Started - HSK Platform Development
 
-Panduan langkah demi langkah untuk memulai development. Dokumen ini sudah diselaraskan dengan **MVP publik fase 1**: auth, katalog, viewer Level 1, landing page, pricing placeholder, profile sederhana, dan deploy public. Payment/membership belum dikerjakan sekarang.
+Panduan langkah demi langkah untuk memulai development dan launch. Dokumen ini sudah diselaraskan dengan **MVP publik fase 1**: auth, katalog, viewer Level 1, landing page, pricing placeholder, profile sederhana, SEO/analytics dasar, dan deploy public. Payment/membership belum dikerjakan sekarang.
 
-Catatan status repo saat ini: implementasi sudah mencapai **Fase 3**. Artinya auth, katalog dasar, halaman upgrade, dan route baca placeholder sudah ada. Fase 4 di bawah ini berarti menyempurnakan route baca tersebut menjadi PDF viewer penuh, bukan membuat route dari nol.
+Catatan status repo saat ini: implementasi lokal sudah mencapai **Fase 6** dan lulus verifikasi build/lint/typecheck. Artinya Fase 1-6 di bawah ini adalah histori/panduan bila perlu mengulang dari nol; pekerjaan yang tersisa terutama checklist operasional sebelum launch publik.
 
 ---
 
@@ -12,8 +12,8 @@ Beberapa langkah ini harus dikerjakan manual.
 
 ### 1.1 Akun Supabase
 
-- [✅] Daftar di https://supabase.com
-- [✅] Buat project baru
+- [x] Daftar di https://supabase.com
+- [x] Buat project baru
 - [ ] Catat dari Project Settings -> API:
   - `Project URL` -> `NEXT_PUBLIC_SUPABASE_URL`
   - `anon public` key -> `NEXT_PUBLIC_SUPABASE_ANON_KEY`
@@ -78,7 +78,7 @@ Jalankan fase satu per satu. Setelah setiap fase selesai, test dulu sebelum lanj
 Baca semua file di folder specs/ untuk memahami konteks proyek ini.
 
 Tugas Fase 1:
-1. Inisialisasi project Next.js 14 dengan TypeScript, Tailwind CSS, dan App Router
+1. Inisialisasi project Next.js dengan TypeScript, Tailwind CSS, dan App Router
 2. Setup Supabase client:
    - lib/supabase/client.ts
    - lib/supabase/server.ts
@@ -121,7 +121,7 @@ Implementasikan:
 - /forgot-password
 - /reset-password
 - /auth/callback
-- middleware proteksi /dashboard/*
+- proxy proteksi /dashboard/*
 - form validation
 - integrasi Supabase Auth
 
@@ -247,6 +247,29 @@ Review final dan laporkan sisa risiko.
 
 ---
 
+## Bagian 2a: Status Implementasi Saat Ini
+
+Status repo lokal per 2026-04-23:
+
+- [x] Fase 1 - Setup project, Supabase client, migration, env example, gitignore
+- [x] Fase 2 - Auth pages, callback, reset password, resend verification, route protection via `proxy.ts`
+- [x] Fase 3 - Catalog, ebook cards/grid, upgrade page, access control Level 1 vs Level 2-3
+- [x] Fase 4 - PDF viewer, API signed URL 15 menit, gate auth + level check
+- [x] Fase 5 - Landing page, pricing placeholder, profile, centralized contact CTA
+- [x] Fase 6 - SEO metadata, robots/sitemap, optional GA4 loader, responsive dashboard header, credential audit
+
+Verifikasi lokal yang disarankan:
+
+```bash
+npm run lint
+npm run build
+npx tsc --noEmit
+```
+
+Catatan: jalankan `npm run build` sebelum `npx tsc --noEmit` jika `.next/types` belum ada atau baru dibersihkan. `tsconfig.json` memasukkan `.next/types/**/*.ts` untuk validasi tipe Next.js 16.
+
+---
+
 ## Bagian 3: Apa yang Sengaja Ditunda
 
 Belum dikerjakan di fase ini:
@@ -279,10 +302,16 @@ Saat ada perubahan:
 
 ## Bagian 5: Checklist Sebelum Launch Publik Fase 1
 
+- [ ] `npm run lint` lulus
+- [ ] `npm run build` lulus
+- [ ] `npx tsc --noEmit` lulus setelah build
 - [ ] Jika custom SMTP dipakai, provider final sudah dipilih eksplisit
 - [ ] Semua env variable Supabase sudah ter-set di Vercel
 - [ ] `NEXT_PUBLIC_APP_URL` sudah ter-set sesuai domain aktif
+  - Contoh: `https://nama-domain.com`
+  - Trailing slash aman karena app menormalisasi via `getAppUrl()`, tetapi value tanpa trailing slash tetap direkomendasikan
 - [ ] `NEXT_PUBLIC_CONTACT_URL` sudah ter-set dan mengarah ke kanal kontak final
+- [ ] `NEXT_PUBLIC_GA_MEASUREMENT_ID` sudah ter-set jika Google Analytics dipakai
 - [ ] Supabase auth email template sudah benar
 - [ ] Jika custom SMTP dipakai, sender identity dan kredensial SMTP sudah tervalidasi
 - [ ] Jika custom SMTP dipakai, SPF/DKIM/DMARC domain pengirim sudah benar
@@ -297,6 +326,7 @@ Saat ada perubahan:
 - [ ] Domain sudah terhubung jika diperlukan
 - [ ] HTTPS aktif
 - [ ] Google Analytics aktif jika dipakai
+- [ ] `/robots.txt` dan `/sitemap.xml` bisa diakses di domain publik
 - [ ] Halaman privacy policy dan terms of service dibuat jika diperlukan untuk publik
 
 ---

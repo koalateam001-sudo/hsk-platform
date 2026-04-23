@@ -1,7 +1,7 @@
 # Architecture & Tech Stack
 
 **Status:** Active  
-**Version:** 3.8  
+**Version:** 3.9  
 **Last Updated:** 2026-04-23  
 
 ---
@@ -31,8 +31,8 @@ Status implementasi lanjutan:
 - Verifikasi terakhir 2026-04-23: `npx.cmd tsc --noEmit`, `npm.cmd run lint`, dan `npm.cmd run build` lulus
 - Fase 5 selesai: landing page `/` (Server Component dengan redirect ke `/dashboard/catalog` untuk user login), `/pricing`, dan `/dashboard/profile` sudah jalan; navbar+footer publik di `components/marketing/`; util kontak terpusat di `lib/contact.ts` + `components/marketing/contact-cta.tsx` dipakai oleh landing/pricing/upgrade/profile
 - Fase 6 selesai:
-  - SEO metadata dasar dipusatkan di `app/layout.tsx` (title template, `metadataBase` dari `NEXT_PUBLIC_APP_URL`, OG/Twitter default, robots allow); halaman publik (`/`, `/pricing`) punya metadata per-route dengan `alternates.canonical`; halaman auth + dashboard di-`noindex`
-  - `app/robots.ts` dan `app/sitemap.ts` di-generate native Next.js `MetadataRoute` (hasil build: `/robots.txt` + `/sitemap.xml` static)
+  - SEO metadata dasar dipusatkan di `app/layout.tsx` (title template, `metadataBase` dari `getAppUrl()`/`NEXT_PUBLIC_APP_URL`, OG/Twitter default, robots allow); halaman publik (`/`, `/pricing`) punya metadata per-route dengan `alternates.canonical`; halaman auth + dashboard di-`noindex`
+  - `app/robots.ts` dan `app/sitemap.ts` di-generate native Next.js `MetadataRoute` (hasil build: `/robots.txt` + `/sitemap.xml` static) dan memakai `getAppUrl()` agar trailing slash pada `NEXT_PUBLIC_APP_URL` tidak membuat URL ganda
   - `components/analytics/google-analytics.tsx` memuat GA4 via `next/script` hanya jika `NEXT_PUBLIC_GA_MEASUREMENT_ID` terisi; di-mount sekali di root layout
   - Dashboard header responsive: `flex-wrap + gap-x-4 gap-y-2` supaya nav (Katalog/Premium/Profile/Logout + user info) tidak overflow di viewport sempit; brand block pakai `min-w-0 truncate`
   - `npm run build` lulus dengan Turbopack tanpa warning (15 routes, 5 static termasuk `robots.txt` dan `sitemap.xml`); `npx tsc --noEmit` lulus
@@ -285,3 +285,4 @@ NEXT_PUBLIC_GA_MEASUREMENT_ID=
 | 2026-04-23 | 3.6 | Fase 6 polish: SEO metadata (title template + metadataBase + OG/Twitter), `app/robots.ts` + `app/sitemap.ts`, noindex untuk auth/dashboard, Google Analytics conditional via `components/analytics/google-analytics.tsx`, dashboard header responsive (flex-wrap), build Turbopack lulus tanpa warning |
 | 2026-04-23 | 3.7 | Koreksi narasi § Current State line foundation agar tidak mengunci "Next.js 14"; runtime aktual sudah 16.2.4 sejak changelog 3.3 |
 | 2026-04-23 | 3.8 | Migrasi route protection ke `proxy.ts` sesuai Next.js 16, ganti lint script ke ESLint CLI flat config, tegaskan callback auth memakai `getAuthCallbackUrl()` berbasis `NEXT_PUBLIC_APP_URL`, dan catat verifikasi build/lint/typecheck + runtime test `/dashboard/*` redirect terbaru. Catatan: percobaan rollback ke `middleware.ts` di commit `d6d5c4c` dibatalkan setelah verifikasi runtime membuktikan `proxy.ts` dieksekusi Next.js 16.2.4 dengan benar |
+| 2026-04-23 | 3.9 | Normalisasi base URL SEO: `app/layout.tsx`, `app/robots.ts`, dan `app/sitemap.ts` memakai `getAppUrl()` agar `NEXT_PUBLIC_APP_URL` dengan trailing slash tidak menghasilkan URL double slash |

@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { GoogleAnalytics } from "@/components/analytics/google-analytics";
+import { getAppUrl } from "@/lib/auth";
 
-const siteUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
+const siteUrl = getAppUrl();
 const siteName = "HSK 3.0 Platform";
 const defaultTitle = "HSK 3.0 Platform — Materi New HSK 3.0 Online";
 const defaultDescription =
