@@ -1,6 +1,13 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { AuthShell } from "@/components/auth/auth-shell";
 import { ForgotPasswordForm } from "@/components/auth/forgot-password-form";
+
+export const metadata: Metadata = {
+  title: "Lupa Password",
+  description: "Kirim ulang link reset password untuk akun HSK 3.0 Platform.",
+  robots: { index: false, follow: false },
+};
 
 export default function ForgotPasswordPage() {
   return (

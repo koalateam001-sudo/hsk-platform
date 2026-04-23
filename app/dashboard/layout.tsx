@@ -1,8 +1,13 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import type { ReactNode } from "react";
 import { LogoutButton } from "@/components/auth/logout-button";
 import { createServerClient } from "@/lib/supabase/server";
 import type { Tables } from "@/lib/supabase/types";
+
+export const metadata: Metadata = {
+  robots: { index: false, follow: false },
+};
 
 export default async function DashboardLayout({
   children,
@@ -24,17 +29,17 @@ export default async function DashboardLayout({
   return (
     <main className="min-h-screen bg-slate-100">
       <header className="border-b border-slate-200 bg-white">
-        <div className="mx-auto flex max-w-5xl items-center justify-between px-4 py-4">
-          <div>
+        <div className="mx-auto flex max-w-5xl flex-wrap items-center justify-between gap-3 px-4 py-4">
+          <div className="min-w-0">
             <p className="text-sm font-semibold text-slate-900">
               HSK 3.0 Platform
             </p>
-            <p className="text-sm text-slate-500">
+            <p className="truncate text-sm text-slate-500">
               {profile?.full_name || user?.email}
             </p>
           </div>
 
-          <div className="flex items-center gap-3">
+          <nav className="flex flex-wrap items-center gap-x-4 gap-y-2">
             <Link
               href="/dashboard/catalog"
               className="text-sm font-medium text-slate-600 transition hover:text-slate-900"
@@ -54,7 +59,7 @@ export default async function DashboardLayout({
               Profile
             </Link>
             <LogoutButton />
-          </div>
+          </nav>
         </div>
       </header>
 

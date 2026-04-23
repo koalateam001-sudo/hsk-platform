@@ -1,8 +1,8 @@
 # Architecture & Tech Stack
 
 **Status:** Active  
-**Version:** 3.5  
-**Last Updated:** 2026-04-22  
+**Version:** 3.6  
+**Last Updated:** 2026-04-23  
 
 ---
 
@@ -26,6 +26,13 @@ Status implementasi lanjutan:
 - Fase 4 PDF viewer sudah selesai: `react-pdf@^9` + `pdfjs-dist@^4` terpasang; komponen `components/pdf/pdf-viewer.tsx` memakai signed URL dari API; API route `app/api/ebook/[id]/stream/route.ts` generate signed URL 15 menit via service role client (`lib/supabase/service.ts`) dan sudah membawa gate 401/403/404 yang sama dengan route baca
 - Upgrade Next.js 16.2.4 + React 19.2.5 + `@supabase/ssr@0.10.2` sudah selesai (`build` lulus, `tsc --noEmit` lulus); breaking changes Next.js 15–16 sudah di-handle (lihat § Pola Kode)
 - Fase 5 selesai: landing page `/` (Server Component dengan redirect ke `/dashboard/catalog` untuk user login), `/pricing`, dan `/dashboard/profile` sudah jalan; navbar+footer publik di `components/marketing/`; util kontak terpusat di `lib/contact.ts` + `components/marketing/contact-cta.tsx` dipakai oleh landing/pricing/upgrade/profile
+- Fase 6 selesai:
+  - SEO metadata dasar dipusatkan di `app/layout.tsx` (title template, `metadataBase` dari `NEXT_PUBLIC_APP_URL`, OG/Twitter default, robots allow); halaman publik (`/`, `/pricing`) punya metadata per-route dengan `alternates.canonical`; halaman auth + dashboard di-`noindex`
+  - `app/robots.ts` dan `app/sitemap.ts` di-generate native Next.js `MetadataRoute` (hasil build: `/robots.txt` + `/sitemap.xml` static)
+  - `components/analytics/google-analytics.tsx` memuat GA4 via `next/script` hanya jika `NEXT_PUBLIC_GA_MEASUREMENT_ID` terisi; di-mount sekali di root layout
+  - Dashboard header responsive: `flex-wrap + gap-x-4 gap-y-2` supaya nav (Katalog/Premium/Profile/Logout + user info) tidak overflow di viewport sempit; brand block pakai `min-w-0 truncate`
+  - `npm run build` lulus dengan Turbopack tanpa warning (15 routes, 5 static termasuk `robots.txt` dan `sitemap.xml`); `npx tsc --noEmit` lulus
+  - Audit credential: tidak ada supabase URL/anon key/service role literal di repo di luar `.env.example` placeholder dan spec docs
 - Domain custom belum dibeli (opsional, bisa pakai subdomain Vercel saat deploy)
 
 ---
@@ -271,3 +278,4 @@ NEXT_PUBLIC_GA_MEASUREMENT_ID=
 | 2026-04-22 | 3.3 | Upgrade Next.js 14.2.15 → 16.2.4, React 18 → 19.2.5, `@supabase/ssr` 0.5.2 → 0.10.2, eslint 8 → 9; rename `middleware.ts` → `proxy.ts`; migrasi webpack config ke Turbopack (`canvas-stub.js`); async `cookies()`, `params`, `searchParams` di semua server components dan route handlers |
 | 2026-04-22 | 3.4 | Koreksi wording Current State agar konsisten dengan implementasi Next.js 16: proteksi route disebut `proxy.ts` (bukan `middleware.ts`) |
 | 2026-04-22 | 3.5 | Fase 5 selesai: landing `/`, `/pricing`, `/dashboard/profile`; tambah `components/marketing/` (public navbar, footer, contact CTA) dan `lib/contact.ts` sebagai sumber tunggal `NEXT_PUBLIC_CONTACT_URL` |
+| 2026-04-23 | 3.6 | Fase 6 polish: SEO metadata (title template + metadataBase + OG/Twitter), `app/robots.ts` + `app/sitemap.ts`, noindex untuk auth/dashboard, Google Analytics conditional via `components/analytics/google-analytics.tsx`, dashboard header responsive (flex-wrap), build Turbopack lulus tanpa warning |

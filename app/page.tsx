@@ -1,8 +1,22 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { PublicFooter } from "@/components/marketing/public-footer";
 import { PublicNavbar } from "@/components/marketing/public-navbar";
 import { createServerClient } from "@/lib/supabase/server";
+
+export const metadata: Metadata = {
+  title: "Materi Lengkap New HSK 3.0, Dalam Satu Tempat",
+  description:
+    "Baca ebook New HSK 3.0 langsung di browser. Mulai gratis dari Level 1, Level 2 dan 3 segera menyusul.",
+  alternates: { canonical: "/" },
+  openGraph: {
+    title: "Materi Lengkap New HSK 3.0, Dalam Satu Tempat",
+    description:
+      "Baca ebook New HSK 3.0 langsung di browser. Mulai gratis dari Level 1.",
+    url: "/",
+  },
+};
 
 export default async function HomePage() {
   const supabase = await createServerClient();
